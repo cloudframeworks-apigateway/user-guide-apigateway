@@ -36,84 +36,63 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 
 ## <a name="镜像部署">镜像部署</a>
 
-1. Docker环境准备
-
-   * ubuntu
-
-   1.更新apt包
-    ```
-    sudo apt-get update
-    ```
-   2.安装 Docker
-    ```
-    sudo apt-get install docker-engine
-    ```
-        
-   3.启动 Docker 服务
-   ```
-   sudo service docker start
-   ```
-   4.查看docker状态
-    ```
-    docker info
-    ```
-
-   * mac
-
-   请参考[https://docs.docker.com/docker-for-mac/](https://docs.docker.com/docker-for-mac/)
+1. 准备Docker环境
 
 2. 启动两个web站点用于测试
-    ```
-    docker pull nginx:alpine
-    docker run -d -p 9001:80 nginx:alpine
-    docker run -d -p 9002:80 nginx:alpine
-    ```
-3. 启动kong
+
    ```
-    docker pull kong
-    docker pull postgres
-    docker run -d --name kong-database \
-                  -p 5432:5432 \
-                  -e "POSTGRES_USER=kong" \
-                  -e "POSTGRES_DB=kong" \
-                  postgres
-    docker run -d --name kong \
-                  --link kong-database:kong-database \
-                  -e "KONG_DATABASE=postgres" \
-                  -e "KONG_PG_HOST=kong-database" \
-                  -p 8000:8000 \
-                  -p 8443:8443 \
-                  -p 8001:8001 \
-                  -p 7946:7946 \
-                  -p 7946:7946/udp \
-                  kong
+   docker pull nginx:alpine
+   docker run -d -p 9001:80 nginx:alpine
+   docker run -d -p 9002:80 nginx:alpine
+   ```
+
+3. 启动kong
+   
+   ```
+   docker pull kong
+   docker pull postgres
+   docker run -d --name kong-database \
+                 -p 5432:5432 \
+                 -e "POSTGRES_USER=kong" \
+                 -e "POSTGRES_DB=kong" \
+                 postgres
+   docker run -d --name kong \
+                 --link kong-database:kong-database \
+                 -e "KONG_DATABASE=postgres" \
+                 -e "KONG_PG_HOST=kong-database" \
+                 -p 8000:8000 \
+                 -p 8443:8443 \
+                 -p 8001:8001 \
+                 -p 7946:7946 \
+                 -p 7946:7946/udp \
+                 kong
    ```
 4. 启动kong-dashboard
-    ```
-    docker pull goodraincloudframeworks/docker-kong-dashboard
-    docker run -d -p 5000:8080 goodraincloudframeworks/docker-kong-dashboard
-    ```
 
-5. 基于[docker-compose](https://docs.docker.com/compose/install/)运行如下命令（[docker-compose.yml]()）
+   ```
+   docker pull goodraincloudframeworks/docker-kong-dashboard
+   docker run -d -p 5000:8080 goodraincloudframeworks/docker-kong-dashboard
+   ```
+
+5. 基于[docker-compose](https://docs.docker.com/compose/install/)运行如下命令
 
    ```
    docker-compose -f docker-compose.yml up -d
    ```
 
-> **Endpoints**
->
-> http://127.0.0.1:8000 - kong url
-> 
-> http://127.0.0.1:8001 - kong admin url
->  
-> https://127.0.0.1:8443 - kong https url
-> 
-> http://127.0.0.1:5000 - kong dashboard ui
-> 
-> http://127.0.0.1:9001 - nginx demo1 url
->
-> http://127.0.0.1:9002 - nginx demo2 url
->
+6. 访问路径
+
+   http://127.0.0.1:8000 - kong url
+   
+   http://127.0.0.1:8001 - kong admin url
+   
+   https://127.0.0.1:8443 - kong https url
+   
+   http://127.0.0.1:5000 - kong dashboard ui
+   
+   http://127.0.0.1:9001 - nginx demo1 url
+   
+   http://127.0.0.1:9002 - nginx demo2 url
 
 # <a name="Kong说明">Kong说明</a>
 
