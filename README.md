@@ -16,7 +16,7 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 # 内容概览
 
 * [快速部署](#快速部署)
-* [Kong](#Kong)
+* [Kong说明](#Kong说明)
    * [Kong描述](#Kong描述)
    * [Kong插件](#Kong插件)
    * [Kong使用](#组件)
@@ -115,7 +115,7 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 > http://127.0.0.1:9002 - nginx demo2 url
 >
 
-# <a name="Kong">Kong</a>
+# <a name="Kong说明">Kong说明</a>
 
 ## <a name="Kong描述">Kong描述</a>
 
