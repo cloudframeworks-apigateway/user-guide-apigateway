@@ -378,17 +378,17 @@ handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所
 
 # <a name="更新计划"></a>更新计划
 
-* `文档` 增加在线演示
-* `组件` 增加组件内容，如Spring Cloud Sleuth、Spring Cloud Consul等
-* `生产环境` 增加生产环境下各项扩展操作，如性能测试及各类部署、特性、技术实现等
-* `快速部署` 增加好雨云帮部署
-* `常见问题` 问题汇总
+* `文档` 增加
+* `组件` 增加
+* `生产环境` 增加
+* `快速部署` 增加
+* `常见问题` 问题
 
 点击查看[历史更新](CHANGELOG.md)
 
 # <a name="社群贡献"></a>社群贡献
 
-+ QQ群: 531980120
++ QQ群: 
 + [参与贡献](CONTRIBUTING.md)
 + [联系我们](mailto:info@goodrain.com)
 
