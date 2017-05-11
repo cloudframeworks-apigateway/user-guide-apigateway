@@ -1,4 +1,4 @@
-# [云框架]KONG Api Gateway
+# [云框架]KONG API Gateway
 
 ![](https://img.shields.io/badge/release-v0.1-green.svg)
 [![](https://img.shields.io/badge/Producer-woodyalen202-orange.svg)](CONTRIBUTORS.md)
@@ -16,14 +16,14 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 # 内容概览
 
 * [快速部署](#快速部署)
-* [Kong说明](#Kong说明)
-   * [Kong描述](#Kong描述)
-   * [Kong插件](#Kong插件)
-   * [Kong使用](#组件)
-* [注册API](#注册API)
+* [KONG说明](#KONG说明)
+   * [KONG描述](#KONG描述)
+   * [KONG插件](#KONG插件)
+* [KONG使用](#KONG使用)
+   * [注册API](#注册API)
    * [添加用户](#添加用户)
    * [API添加插件](#API添加插件)
-* [Kong插件开发](#Kong插件开发)
+* [KONG插件开发](#KONG插件开发)
    * [开发流程](#开发流程)
    * [log2zmq](#log2zmq)
    * [accesslimiting](#accesslimiting)
