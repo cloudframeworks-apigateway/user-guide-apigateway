@@ -17,8 +17,8 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 
 * [快速部署](#快速部署)
 * [KONG说明](#KONG说明)
-   * [KONG描述](#KONG描述)
-   * [KONG插件](#KONG插件)
+   * [KONG描述](#KONG描述)
+   * [KONG插件](#KONG插件)
 * [KONG使用](#KONG使用)
    * [注册API](#注册API)
    * [添加用户](#添加用户)
@@ -94,9 +94,9 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
    
    http://127.0.0.1:9002 - nginx demo2 url
 
-# <a name="Kong说明">Kong说明</a>
+# <a name="KONG说明">KONG说明</a>
 
-## <a name="Kong描述">Kong描述</a>
+## <a name="KONG描述">KONG描述</a>
 
 Kong是Mashape开源的高性能高可用API网关和API服务管理层。它基于OpenResty，进行API管理，并提供了插件实现API的AOP。
 Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。非常稳定、高效。
@@ -116,7 +116,7 @@ Kong的代理方式有两种:
 ![Kong API](image/supervisord.png)
 
 
-## <a name="Kong插件">Kong插件</a>
+## <a name="KONG插件">KONG插件</a>
 
 Kong默认提供了7类共31种插件(v0.10.2):
 * Authentication
@@ -137,7 +137,7 @@ Kong默认提供了7类共31种插件(v0.10.2):
 这些插件可以满足大多数的需求，对于无法满足的业务需求，Kong提供扩展功能，用户可以自定义Kong插件。
 后面以2个插件为例来说明Kong的扩展插件步骤。
 
-# <a name="Kong使用">Kong使用</a>
+# <a name="KONG使用">KONG使用</a>
 
 Kong对外提供rest api进行管理。详见[Kong admin api](https://getkong.org/docs/0.10.x/admin-api/)
 
@@ -209,7 +209,7 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 ![kong key auth success](image/keyauthfailed.png)
 
 
-# <a name="如何开发自己的Kong插件">Kong插件开发</a>
+# <a name="KONG插件开发">KONG插件开发</a>
 
 ## <a name="开发流程">开发流程</a>
 
