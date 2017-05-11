@@ -96,8 +96,8 @@ api gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
    ```
 4. 启动kong-dashboard
     ```
-    docker pull woodyalen202/docker-kong-dashboard
-    docker run -d -p 5000:8080 woodyalen202/docker-kong-dashboard
+    docker pull goodraincloudframeworks/docker-kong-dashboard
+    docker run -d -p 5000:8080 goodraincloudframeworks/docker-kong-dashboard
     ```
 
 5. 基于[docker-compose](https://docs.docker.com/compose/install/)运行如下命令（[docker-compose.yml]()）
