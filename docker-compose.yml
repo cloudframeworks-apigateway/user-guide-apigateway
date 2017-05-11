@@ -1,22 +1,18 @@
 nginx1:
   mem_limit: 128m
   ports:
-    - 8001:80
-  expose:
-    - 8001
+    - 9001:80
   restart: always
 
 nginx2:
   mem_limit: 128m
   ports:
-    - 8002:80
-  expose:
-    - 8002
+    - 9002:80
   restart: always
 
 # Kong Database
 kong-database:
-  image: postgres:9.4
+  image: postgres
   ports:
     - 5432
   environment:
@@ -38,3 +34,9 @@ kong:
   environment:
     - KONG_DATABASE=postgres
     - KONG_PG_HOST=kong-database
+
+# Kong dashboard
+kong:
+  image: woodyalen202/docker-kong-dashboard
+  ports:
+    - 5000:8080

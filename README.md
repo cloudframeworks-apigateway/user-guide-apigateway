@@ -21,19 +21,17 @@ api gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 * [快速部署](#快速部署)
    * [镜像部署](#镜像部署)
 * [框架说明](#框架说明) 
-   * [业务](#业务)
-      * [业务背景](#业务背景)
-      * [业务架构](#业务架构)
-      * [业务模块](#业务模块)
-   * [组件](#组件)
-      * [组件架构](#组件架构)
-      * [Spring Cloud Config](#Spring-Cloud-Config)
-      * [Netflix Eureka](#Netflix-Eureka)
-      * [Netflix Zuul](#Netflix-Zuul)
-      * [Netflix Ribbon](#Netflix-Ribbon)
-      * [Netflix Hystrix](#Netflix-Hystrix)
-      * [Netflix Feign](#Netflix-Feign)
-* [如何变成自己的项目](#如何变成自己的项目)
+   * [Kong](#Kong)
+      * [Kong描述](#Kong描述)
+      * [Kong插件](#Kong插件)
+   * [Kong使用](#组件)
+      * [注册API](#注册API)
+      * [添加用户](#添加用户)
+      * [API添加插件](#API添加插件)
+   * [Kong插件开发](#Kong插件开发)
+      * [开发流程](#开发流程)
+      * [log2zmq](#log2zmq)
+      * [accesslimiting](#accesslimiting)
 * [生产环境](#生产环境)
 * [常见问题](#常见问题)
 * [更新计划](#更新计划)
@@ -125,7 +123,7 @@ api gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 
 # <a name="Kong">Kong</a>
 
-##<a name="Kong描述">Kong描述</a>
+## <a name="Kong描述">Kong描述</a>
 
 Kong是Mashape开源的高性能高可用API网关和API服务管理层。它基于OpenResty，进行API管理，并提供了插件实现API的AOP。
 Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。非常稳定、高效。
@@ -145,7 +143,7 @@ Kong的代理方式有两种:
 ![Kong API](image/supervisord.png)
 
 
-##<a name="Kong插件">Kong插件</a>
+## <a name="Kong插件">Kong插件</a>
 
 Kong默认提供了7类共31种插件(v0.10.2):
 * Authentication
@@ -240,7 +238,7 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 # <a name="如何开发自己的Kong插件">Kong插件开发</a>
 
-**步骤：**
+## <a name="开发流程">开发流程</a>
 
 1. git clone Kong到本地
     ```
@@ -272,7 +270,7 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 7. 制作kong镜像，之后参照[快速部署](#快速部署)，修改镜像名称，部署kong
 
 
-## <a name="log2zmq"></a>log2zmq
+## <a name="log2zmq">log2zmq</a>
 
 ### 插件描述
 >这个插件的功能：
