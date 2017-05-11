@@ -108,7 +108,6 @@ api gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
    docker-compose -f docker-compose.yml up -d
    ```
 
-
 > **Endpoints**
 >
 > http://127.0.0.1:8000 - kong url
@@ -125,7 +124,9 @@ api gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 >
 
 # <a name="Kong">Kong</a>
+
 ##<a name="Kong描述">Kong描述</a>
+
 Kong是Mashape开源的高性能高可用API网关和API服务管理层。它基于OpenResty，进行API管理，并提供了插件实现API的AOP。
 Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。非常稳定、高效。
 首先我们先了解下Kong这个系统，如下图所示:
@@ -134,8 +135,8 @@ Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月�
 
 Kong在运行过程中，客户端请求将先请求Kong服务器，然后它会被代理到最终的API应用。而插件在api响应循环的生命周期中被执行。
 Kong的代理方式有两种: 
-一是应用通过携带Host头部路由到对应的API应用
-二是通过不同的uri路由到API应用
+* 应用通过携带Host头部路由到对应的API应用
+* 通过不同的uri路由到API应用
 这两种方式都是都是基于Openresty动态增加upstream以及对upstream的DNS resolver来实现。
 插件的各个执行周期则是lua在nginx的各个周期对应。
 
@@ -145,6 +146,7 @@ Kong的代理方式有两种:
 
 
 ##<a name="Kong插件">Kong插件</a>
+
 Kong默认提供了7类共31种插件(v0.10.2):
 * Authentication
 ![Authentication](image/authentication.png)
@@ -165,9 +167,11 @@ Kong默认提供了7类共31种插件(v0.10.2):
 后面以2个插件为例来说明Kong的扩展插件步骤。
 
 # <a name="Kong使用">Kong使用</a>
+
 Kong对外提供rest api进行管理。详见[Kong admin api](https://getkong.org/docs/0.10.x/admin-api/)
 
 ## <a name="注册API">注册API</a>
+
 使用Kong代理API，首先需要把API注册到Kong。
 我们可以通过命令行进行添加:
 ```
@@ -179,14 +183,17 @@ curl -i -X POST \
 ```
 可以从返回的数据判断注册是否成功。
 也可以通过kong-dashboard(kong的ui管理界面)进行添加:
+
 ![kong add api](image/apiadd.png)
 
 创建成功后可以看到API的列表页查看
+
 ![kong list api](image/apilist.png)
 
 上面我们将9001的nginx注册到Kong
 
 ## <a name="添加用户">添加用户</a>
+
 对于API来讲，有可能没有用户概念，用户可以随意调用。
 对于这种情况，Kong提供了一种consumer对象。
 consumer是全局共用的，比如某个API启用了key-auth,那么没有身份的访问者就无法调用这个API了。
@@ -200,6 +207,7 @@ consumer是全局共用的，比如某个API启用了key-auth,那么没有身份
 
 
 ## <a name="API添加插件">API添加插件</a>
+
 Kong默认提供了31种[插件](#Kong插件)。
 Kong的插件独立作用于每一个API，不同的API可以使用完全不同的插件。
 有的API完全开放，不需要任何认证;
@@ -230,7 +238,6 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 ![kong key auth success](image/keyauthfailed.png)
 
 
-
 # <a name="如何开发自己的Kong插件">Kong插件开发</a>
 
 **步骤：**
@@ -256,28 +263,113 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
     mkdir xxx
     ```
      
-4. 编辑插件的schema、handler
+4. 编辑插件的schema.lua、handler.lua, 根据实际情况完成插件逻辑
+
+5. 修改${KONG_DIR}/templates/kong_defaults.lua，配置custom_plugins=xxx
+
+6. 执行luaracks make安装插件到本地进行测试
      
-5. 执行luaracks make安装插件到本地进行测试
-     
-6. 制作kong镜像，之后参照[快速部署](#快速部署)，修改镜像名称，部署kong
+7. 制作kong镜像，之后参照[快速部署](#快速部署)，修改镜像名称，部署kong
 
 
 ## <a name="log2zmq"></a>log2zmq
 
 ### 插件描述
-这个插件的功能：
-1、获取请求的日志
-2、将日志数据发送到zeromq服务端
+>这个插件的功能：
+>* 获取请求的日志
+>* 将日志数据发送到zeromq服务端
 
-在custom_plugins中创建log2zmq目录，
-之后添加schema.lua对应API添加log2zmq功能，添加的参数等信息
+>首先确认插件注册时需要的参数信息:
+>* zeromq的服务器IP地址
+>* zeromq的服务器端口
+>* zeromq的topic
+
+>之后在custom_plugins中创建log2zmq目录，添加schmea.lua，添加对应的逻辑用于处理API注册。
+>
+>![自定义组件](image/pluginshow.png)
+>
+>![log2zmq](image/log2zmq.png)
+
+>之后需要处理请求处理过程中插件的逻辑，需要handler.lua脚本完成。
+handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所有的插件都需要继承BasePlugin。
+在BasePlugin中定义了请求处理的几个过程，自定义插件可以通过复写这些方法完成对应的逻辑。
+>
+>![baseplugin](image/baseplugin.png)
+
+>这个插件需要收集日志，因此复写log方法完成日志收集、发送。
+>
+>![log2zmq log](image/log2zmqhandler.png)
+
+>之后修改kong_default.lua的custom_plugins数据:
+>```
+>custom_plugins = log2zmq
+>```
+
+>本地测试插件功能
+>```
+>luarocks make
+>```
+
+>制作kong的镜像，将自定义的插件打包到镜像中
+>参照快速部署部署自定义kong
 
 
+## <a name="accesslimiting">accesslimiting</a>
+### 插件描述
+>这个插件的功能：
+>* 过去period分钟内，每个ip限制访问limit次
 
-## <a name="accesslimiting"></a>accesslimiting
+>首先确认插件注册时需要的参数信息:
+>* period，时间间隔
+>* limit，ip访问次数限制
 
 
+>之后在custom_plugins中创建accesslimiting目录，添加schmea.lua，添加对应的逻辑用于处理API注册。
+>
+>![accesslimit](image/accesslimit.png)
+
+>之后需要处理请求处理过程中插件的逻辑，需要handler.lua脚本完成。
+>这个插件需要存储访问数据，这里演示使用数据库进行存储，使用推荐redis等nosql。
+>存储数据除了handler.lua外，还需要定义插件的数据结构、数据库访问方法。
+>Kong支持2种数据结构: cassandra\postgres。这里使用postgres
+>首先定义表结构，在插件目录下创建migrations/postgres.lua，完成插件的初始化和清理逻辑，如下所示:
+>```
+>mkdir -p ${KONG_DIR}/custom_plugins/xxx/migrations
+>touch postgres.lua
+>return {
+>     {
+>         name = "xxxxxxxxx",
+>         up = [[
+>             CREATE TABLE IF NOT EXISTS ${TABLENAME}(
+>                 xx
+>             );
+>         ]],
+>         down = [[
+>             DROP TABLE ${TABLENAME};
+>         ]]
+>     }
+> }
+>```
+
+>之后完成数据的访问，在插件目录下创建dao/postgres.lua
+>![accesslimit dao](image/accesslimitdao.png)
+
+
+>这个插件在请求访问前确认是访问，因此复写access方法完成访问校验。
+>![accesslimit handler](image/accesslimithandler.png)
+
+>之后修改kong_default.lua的custom_plugins数据:
+>```
+>custom_plugins = log2zmq, accesslimit
+>```
+
+>本地测试插件功能
+>```
+>luarocks make
+>```
+
+>制作kong的镜像，将自定义的插件打包到镜像中
+>参照快速部署部署自定义kong
 
      
 # <a name="生产环境"></a>生产环境
@@ -297,7 +389,6 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 ### Roadmap
 
 * `文档` 增加在线演示
-* `组件` 增加组件内容，如Spring Cloud Sleuth、Spring Cloud Consul等
 * `生产环境` 增加生产环境下各项扩展操作，如性能测试及各类部署、特性、技术实现等
 * `快速部署` 增加好雨云帮部署
 * `常见问题` 补充问题总结[QA](QA.md)
