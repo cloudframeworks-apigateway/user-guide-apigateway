@@ -99,7 +99,7 @@
 
 * user：处理敏感数据，如限制访问
 
-* newinfo：普通数据对所有人开发
+* newinfo：普通数据，对所有人开发
 
 对比以上两个端口，我们可以相对清楚的理解KONG及其插件的效果和配置方法。
 
@@ -109,9 +109,9 @@
 
 # <a name="框架说明-组件"></a>框架说明-组件
 
-本例使用KONG本身实现ROUTING，并添加了[OAuth 2.0](https://getkong.org/plugins/oauth2-authentication/)（AUTHENTICATION实现）、[Rate Limiting](https://getkong.org/plugins/rate-limiting/)（TRAFFIC CONTROL实现）、[File](https://getkong.org/plugins/file-log/)（LOGGING实现)等3个插件。（[更多官方插件](https://getkong.org/plugins/)）
+本例使用KONG本身实现ROUTING，并添加了[OAuth 2.0](https://getkong.org/plugins/oauth2-authentication/)（AUTHENTICATION实现）、[Rate Limiting](https://getkong.org/plugins/rate-limiting/)（TRAFFIC CONTROL实现）、[File](https://getkong.org/plugins/file-log/)（LOGGING实现)等3个插件。（[查看更多官方插件](https://getkong.org/plugins/)）
 
-同时借助了**KONG DASHBOARD**来更方便的管理和配置。
+同时借助了**KONG DASHBOARD**(KONG的UI管理界面)来更方便的管理和配置。
 
 <a name="组件架构"></a>组件架构如下图所示：
 
@@ -137,8 +137,10 @@
 
 ### <a name="注册API"></a>注册API
 
-使用Kong代理API，首先需要把API注册到Kong。
-我们可以通过命令行进行添加:
+使用Kong代理API，首先需要把API注册到Kong，可通过命令行添加，并通过返回数据判断注册是否成功；也可以通过kong-dashboard进行添加，并在在API列表页查看，如下将9001的nginx注册到Kong：
+
+命令行：
+
 ```
 curl -i -X POST \
       --url http://127.0.0.1:8001/apis/ \
@@ -146,53 +148,46 @@ curl -i -X POST \
       --data 'hosts=nginxfirst' \
       --data 'upstream_url=http://xx.xx.xx.xx:9001/'
 ```
-可以从返回的数据判断注册是否成功。
-也可以通过kong-dashboard(kong的ui管理界面)进行添加:
+
+Dashboard：
 
 <div align=center><img width="600" height="" src="./image/apiadd.png"/></div>
 
-创建成功后可以看到API的列表页查看
-
 <div align=center><img width="600" height="" src="./image/apilist.png"/></div>
-
-上面我们将9001的nginx注册到Kong
 
 ### <a name="添加用户"></a>添加用户
 
-对于API来讲，有可能没有用户概念，用户可以随意调用。
-对于这种情况，Kong提供了一种consumer对象。
-consumer是全局共用的，比如某个API启用了key-auth,那么没有身份的访问者就无法调用这个API了。
-需要首先创建一个Consumer，然后在key-auth插件中为这个consumer生成一个key。
-然后就可以使用这个key来透过权限验证访问API了。
+对于API来讲，有可能没有用户概念，即用户可以随意调用。Kong为这种情况提供了一种consumer对象。
+
+consumer是全局共用的，比如某个API启用了key-auth，那么没有身份的访问者就无法调用这个API了。
+
+首先创建一个Consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
 
 如果另外一个API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，如果要控制这种情况，就需要Kong的ACL插件。
-一定要记住: 对于Kong来讲，认证与权限乃是两个不同的东西。
+
+这里需要特别注意的是，**对于Kong来讲，认证与权限是两个不同的东西**。
 
 <div align=center><img width="600" height="" src="./image/keyauth.png"/></div>
 
 ### <a name="API添加插件"></a>API添加插件
 
-Kong默认提供了31种[插件](#Kong插件)。
-Kong的插件独立作用于每一个API，不同的API可以使用完全不同的插件。
-有的API完全开放，不需要任何认证;
-有的API会涉及敏感数据，权限控制需要非常严格;
-有的API完全不在乎调用频次或者日志;
-有的API则严格限制调用频次或者日志;
+目前，Kong默认提供了31种插件，插件独立作用于每一个API，不同的API可以使用完全不同的插件。这是一种非常科学的设计，例如在实际情况中有的API完全开放，不需要任何认证，有的API会涉及敏感数据，权限控制需要非常严格；有的API完全不在乎调用频次或者日志，有的API则严格限制调用频次或者日志。
 
-可以通过rest api、kong-dashboard添加api的插件。
+如为前面注册的9001nginx添加访问控制，所有通过验证的请求可以访问，而验证失败请求则不能：
+
+命令行：
+
 ```
 curl -i -X POST \
   --url http://127.0.0.1:8001/apis/nginxfirst/plugins/ \
   --data 'name=key-auth'
 ```
 
+Dashboard：
+
 <div align=center><img width="600" height="" src="./image/pluginadd.png"/></div>
 
-上面注册的9001nginx添加了访问控制，所有通过验证的请求可以访问9001nginx;
-验证失败请求则无法访问9001nginx。
-
-
-我们通过命令行可以访问验证:
+另外，可通过命令行进行访问验证:
 
 ```
 curl -H 'Host: nginxfirst' -H 'TT: e9da671f5c5d44d5bfdca95585283979' http://127.0.0.1:8000
@@ -210,98 +205,99 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 首先将服务注册到Kong，外部访问统一走api gateway代理。
 
->可以通过admin api进行注册，这里使用dashboard处理。
+可以通过admin api进行注册，这里使用dashboard处理。
 
->* 注册用户信息api
+* 注册user api
 
 <div align=center><img width="600" height="" src="./image/new-personadd.png"/></div>
 
->* 注册新闻通知api
+* 注册newinfo api
 
 <div align=center><img width="600" height="" src="./image/new-newinfoadd.png"/></div>
 
->注册后可以通过Kong代理访问用户信息、消息通知
+注册成功后即可通过Kong代理访问用户信息、消息通知
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 <div align=center><img width="600" height="" src="./image/kong-proxynewinfo.png"/></div>
 
->此时，可以将用户信息、新闻通知对外访问控制限制为只有Kong可以访问，外部请求全部通过Kong进行代理。
+此时，可以将用户信息、新闻通知对外访问控制限制为只有Kong可以访问，外部请求全部通过Kong进行代理。
 
 ## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
-> 对于用户信息数据，我们不希望对外公开，限制访问的用户。在Kong的AUTHENTICATION类插件中多种，其中Oauth2认证是最为广泛的。
-这里我们使用OAuth 2.0 Authentication插件。
+对于用户信息数据，我们不希望对外公开，限制访问的用户。
 
->首先我们注册Oauth2插件。详细可以参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)
+在Kong的AUTHENTICATION类插件中多种，其中Oauth2认证是最为广泛的。这里我们使用OAuth 2.0 Authentication插件。
+
+首先我们注册Oauth2插件。详细可以参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)
 
 <div align=center><img width="600" height="" src="./image/plugin-person-oauth2.png"/></div>
 
->其次添加Consumer，添加Consuer对应的credentials
+其次添加Consumer，添加Consuer对应的credentials
 
 <div align=center><img width="600" height="" src="./image/plugin-person-oauth2user.png"/></div>
 
->对于新闻通知，数据不敏感，我们不关心谁在查询，则无需特殊配置。
+对于新闻通知，数据不敏感，我们不关心谁在查询，则无需特殊配置。
 
 ## <a name="SECURITY"></a>SECURITY实现
 
->对于用户信息接口，我们希望控制其访问的地址，只有我们规定的IP地址可以访问。其他均不能访问该API。
+对于用户信息接口，我们希望控制其访问的地址，只有我们规定的IP地址可以访问。其他均不能访问该API。
 
->Kong提供的SECURITY类插件中有IP Restriction插件可以实现。
+Kong提供的SECURITY类插件中有IP Restriction插件可以实现。
 
->首先给用户信息接口添加IP Restriction插件扩展，这里我们设置白名单，只有名单内的IP可以访问API。
+首先给用户信息接口添加IP Restriction插件扩展，这里我们设置白名单，只有名单内的IP可以访问API。
 
 <div align=center><img width="600" height="" src="./image/plugin-person-ip.png"/></div>
 
->对于正常访问，展示如下:
+对于正常访问，展示如下:
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
->对于其他IP访问，展示如下:
+对于其他IP访问，展示如下:
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
 
->对于新闻通知接口，无此要求则无需配置该插件。
+对于新闻通知接口，无此要求则无需配置该插件。
 
 ## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
 
->对于用户信息接口，我们希望控制其访问频率，不是无限制的访问。
+对于用户信息接口，我们希望控制其访问频率，不是无限制的访问。
 
->Kong提供的TRAFFIC CONTROL类插件中有rate limiting，可以满足该要求。
+Kong提供的TRAFFIC CONTROL类插件中有rate limiting，可以满足该要求。
 
->首先给用户信息接口添加rate limiting插件扩展，这里我们设置为1min中只能访问1次。
+首先给用户信息接口添加rate limiting插件扩展，这里我们设置为1min中只能访问1次。
 
 <div align=center><img width="600" height="" src="./image/plugin-person-ratelimiting.png"/></div>
 
->对于正常访问，展示如下:
+对于正常访问，展示如下:
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
->对于超出次数的访问，展示如下:
+对于超出次数的访问，展示如下:
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
 
->对于新闻通知接口，无此要求则无需配置该插件。
+对于新闻通知接口，无此要求则无需配置该插件。
 
 ## <a name="LOGGING"></a>LOGGING实现
 
->对于用户信息接口，我们希望获取每次访问的日志。
->Kong提供的LOGGING类插件中有几种都可以满足该要求，日志输出到tcp server、udp server、日志文件、系统日志等。
->这里我们使用file-log插件。
+对于用户信息接口，我们希望获取每次访问的日志。
+Kong提供的LOGGING类插件中有几种都可以满足该要求，日志输出到tcp server、udp server、日志文件、系统日志等。
+这里我们使用file-log插件。
 
->首先给用户信息接口添加file-log插件，这里我们设置为日志文件路径设为:/tmp/file.log.
+首先给用户信息接口添加file-log插件，这里我们设置为日志文件路径设为:/tmp/file.log.
 
 <div align=center><img width="600" height="" src="./image/plugin-person-filelog.png"/></div>
 
->备注: 日志文件一定要有写权限
+备注: 日志文件一定要有写权限
 
->添加日志插件后，每次访问，都会记录访问记录:
+添加日志插件后，每次访问，都会记录访问记录:
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-filelog.png"/></div>
 
->日志格式可以参考[Log Format](https://getkong.org/plugins/file-log/#log-format)
+日志格式可以参考[Log Format](https://getkong.org/plugins/file-log/#log-format)
 
->对于新闻通知接口，无此要求则无需配置该插件。
+对于新闻通知接口，无此要求则无需配置该插件。
 
 # <a name="KONG插件开发"></a>KONG插件开发
 
