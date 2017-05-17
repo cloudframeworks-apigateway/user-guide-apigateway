@@ -149,11 +149,11 @@ curl -i -X POST \
 可以从返回的数据判断注册是否成功。
 也可以通过kong-dashboard(kong的ui管理界面)进行添加:
 
-![kong add api](image/apiadd.png)
+<div align=center><img width="600" height="" src="./image/apiadd.png"/></div>
 
 创建成功后可以看到API的列表页查看
 
-![kong list api](image/apilist.png)
+<div align=center><img width="600" height="" src="./image/apilist.png"/></div>
 
 上面我们将9001的nginx注册到Kong
 
@@ -168,7 +168,7 @@ consumer是全局共用的，比如某个API启用了key-auth,那么没有身份
 如果另外一个API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，如果要控制这种情况，就需要Kong的ACL插件。
 一定要记住: 对于Kong来讲，认证与权限乃是两个不同的东西。
 
-![kong key_auth add](image/keyauth.png)
+<div align=center><img width="600" height="" src="./image/keyauth.png"/></div>
 
 ### <a name="API添加插件"></a>API添加插件
 
@@ -185,21 +185,26 @@ curl -i -X POST \
   --url http://127.0.0.1:8001/apis/nginxfirst/plugins/ \
   --data 'name=key-auth'
 ```
-![kong plugin add](image/pluginadd.png)
+
+<div align=center><img width="600" height="" src="./image/pluginadd.png"/></div>
 
 上面注册的9001nginx添加了访问控制，所有通过验证的请求可以访问9001nginx;
 验证失败请求则无法访问9001nginx。
 
 
 我们通过命令行可以访问验证:
+
 ```
 curl -H 'Host: nginxfirst' -H 'TT: e9da671f5c5d44d5bfdca95585283979' http://127.0.0.1:8000
 ```
-![kong key auth success](image/keyauthsucc.png)
+
+<div align=center><img width="600" height="" src="./image/keyauthsucc.png"/></div>
+
 ```
 curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 ```
-![kong key auth success](image/keyauthfailed.png)
+
+<div align=center><img width="600" height="" src="./image/keyauthfailed.png"/></div>
 
 ## <a name="ROUTING"></a>ROUTING实现
 
@@ -209,17 +214,17 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 >* 注册用户信息api
 
->![person api](image/new-personadd.png)
+<div align=center><img width="600" height="" src="./image/new-personadd.png"/></div>
 
 >* 注册新闻通知api
 
->![newinfo api](image/new-newinfoadd.png)
+<div align=center><img width="600" height="" src="./image/new-newinfoadd.png"/></div>
 
 >注册后可以通过Kong代理访问用户信息、消息通知
 
->![kong proxy person api](image/kong-proxyperson.png)
+<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
->![kong proxy newinfo api](image/kong-proxynewinfo.png)
+<div align=center><img width="600" height="" src="./image/kong-proxynewinfo.png"/></div>
 
 >此时，可以将用户信息、新闻通知对外访问控制限制为只有Kong可以访问，外部请求全部通过Kong进行代理。
 
@@ -230,11 +235,11 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 >首先我们注册Oauth2插件。详细可以参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)
 
->![plugin oauth2 person api](image/plugin-person-oauth2.png)
+<div align=center><img width="600" height="" src="./image/plugin-person-oauth2.png"/></div>
 
 >其次添加Consumer，添加Consuer对应的credentials
 
->![plugin oauth2 credentials person api](image/plugin-person-oauth2user.png)
+<div align=center><img width="600" height="" src="./image/plugin-person-oauth2user.png"/></div>
 
 >对于新闻通知，数据不敏感，我们不关心谁在查询，则无需特殊配置。
 
@@ -246,15 +251,15 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 >首先给用户信息接口添加IP Restriction插件扩展，这里我们设置白名单，只有名单内的IP可以访问API。
 
->![plugin ip person api](image/plugin-person-ip.png)
+<div align=center><img width="600" height="" src="./image/plugin-person-ip.png"/></div>
 
 >对于正常访问，展示如下:
 
->![kong proxy person api](image/kong-proxyperson.png)
+<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 >对于其他IP访问，展示如下:
 
->![kong proxy person api ipfail](image/kong-proxyperson-ipfail.png)
+<div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
 
 >对于新闻通知接口，无此要求则无需配置该插件。
 
@@ -266,15 +271,15 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 >首先给用户信息接口添加rate limiting插件扩展，这里我们设置为1min中只能访问1次。
 
->![plugin ratelimiting person api](image/plugin-person-ratelimiting.png)
+<div align=center><img width="600" height="" src="./image/plugin-person-ratelimiting.png"/></div>
 
 >对于正常访问，展示如下:
 
->![kong proxy person api](image/kong-proxyperson.png)
+<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 >对于超出次数的访问，展示如下:
 
->![kong proxy person api failed](image/kong-proxyperson-ratefail.png)
+<div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
 
 >对于新闻通知接口，无此要求则无需配置该插件。
 
@@ -286,13 +291,13 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 >首先给用户信息接口添加file-log插件，这里我们设置为日志文件路径设为:/tmp/file.log.
 
->![plugin filelog person api](image/plugin-person-filelog.png)
+<div align=center><img width="600" height="" src="./image/plugin-person-filelog.png"/></div>
 
 >备注: 日志文件一定要有写权限
 
 >添加日志插件后，每次访问，都会记录访问记录:
 
->![kong proxy person api](image/kong-proxyperson-filelog.png)
+<div align=center><img width="600" height="" src="./image/kong-proxyperson-filelog.png"/></div>
 
 >日志格式可以参考[Log Format](https://getkong.org/plugins/file-log/#log-format)
 
@@ -348,19 +353,19 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 2. 在custom_plugins中创建log2zmq目录，添加schmea.lua，并添加对应的逻辑用于处理API注册
 
-<div align=center><img width="900" height="" src="./image/pluginshow.png"/></div>
+<div align=center><img width="600" height="" src="./image/pluginshow.png"/></div>
 
-<div align=center><img width="900" height="" src="./image/log2zmq.png"/></div>
+<div align=center><img width="600" height="" src="./image/log2zmq.png"/></div>
 
 3. 处理请求处理过程中插件的逻辑，通过handler.lua脚本完成。
 
    handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所有的插件都需要继承BasePlugin。在BasePlugin中定义了请求处理的几个过程，自定义插件可以通过复写这些方法完成对应的逻辑。
 
-   <div align=center><img width="900" height="" src="./image/baseplugin.png"/></div>
+   <div align=center><img width="600" height="" src="./image/baseplugin.png"/></div>
 
    这个插件需要收集日志，因此复写log方法完成日志收集、发送。
 
-   <div align=center><img width="900" height="" src="./image/log2zmqhandler.png"/></div>
+   <div align=center><img width="600" height="" src="./image/log2zmqhandler.png"/></div>
 
 4. 修改kong_default.lua的custom_plugins数据
 
@@ -388,7 +393,7 @@ accesslimiting插件用于定义过去`period`分钟内，每个ip限制访问`l
 
 2. 在custom_plugins中创建accesslimiting目录，添加schmea.lua，添加对应的逻辑用于处理API注册
 
-<div align=center><img width="900" height="" src="./image/accesslimit.png"/></div>
+<div align=center><img width="600" height="" src="./image/accesslimit.png"/></div>
 
 3. 处理请求处理过程中插件的逻辑，需要handler.lua脚本完成
 
@@ -416,11 +421,11 @@ accesslimiting插件用于定义过去`period`分钟内，每个ip限制访问`l
 
    3.2 完成数据的访问，并在插件目录下创建dao/postgres.lua
 
-   <div align=center><img width="900" height="" src="./image/accesslimitdao.png"/></div>
+   <div align=center><img width="600" height="" src="./image/accesslimitdao.png"/></div>
    
    3.3 本插件在请求访问前确认是访问，因此复写access方法完成访问校验
 
-   <div align=center><img width="900" height="" src="./image/accesslimithandler.png"/></div>
+   <div align=center><img width="600" height="" src="./image/accesslimithandler.png"/></div>
 
 4. 之后修改kong_default.lua的custom_plugins数据:
 
