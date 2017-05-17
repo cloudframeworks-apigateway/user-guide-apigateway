@@ -4,14 +4,13 @@
 [![](https://img.shields.io/badge/Producer-woodyalen202-orange.svg)](CONTRIBUTORS.md)
 ![](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
-随着微服务的流行，服务数量急剧增加，连接服务正在激增，部署授权、负载均衡、通信管理、分析和改变的难度也变得越来越大。api gateway可以提供访问限制、安全、流量控制、分析监控、日志、请求转发、合成和协议转换功能，api gateway可以让开发者集中精力去关心具体逻辑的代码，轻松地将应用和其他微服务连接起来，可以看作为准中间件或者服务导向架构媒介，api gateway允许企业打包自己的大型企业应用程序，并连接到网络服务上。
+当我们决定对应用进行微服务改造时，应用客户端如何与微服务交互的问题也随之而来，毕竟服务数量的增加会直接导致部署授权、负载均衡、通信管理、分析和改变的难度增加。
 
-Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)、Zuul、Amazon API网关、Tyk、APIAxle、apiGrove、janus(HelloFresh开源)等，其中[kong](https://getkong.org/)是基于nginx的网关实现，kong最诱人的一个特性是可以通过插件扩展已有功能，这些插件在API请求响应循环的生命周期中被执行。插件使用lua编写，而且kong还有如下几个基础功能：HTTP基本认证、密钥认证、CORS(Cross-origin Resource Sharing，跨域资源共享)、TCP、UDP、文件日志、API 请求限流、请求转发以及nginx监控。
+面对以上问题，API GATEWAY是一个不错的解决方案，其所提供的访问限制、安全、流量控制、分析监控、日志、请求转发、合成和协议转换功能，可以解放开发者去把精力集中在具体逻辑的代码，而不是把时间花费在考虑如何解决应用和其他微服务链接的问题上。
 
-本篇[云框架](ABOUT.md)主要介绍kong的实现原理，并结合小案例，为开发者提供基于kong的api gateway。
+在众多API GATEWAY框架中，Mashape开源的高性能高可用API网关和API服务管理层——[KONG](https://getkong.org/)（基于NGINX）特点尤为突出，它可以通过插件扩展已有功能，这些插件（使用lua编写）在API请求响应循环的生命周期中被执行。于此同时，KONG本身提供包括HTTP基本认证、密钥认证、CORS、TCP、UDP、文件日志、API请求限流、请求转发及NGINX监控等基本功能。目前，Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。
 
-* 初学者可通过实例代码、文档快速学习kong及api gateway，并在社群中交流讨论；
-* 已有一定了解的开发者，不必从零开始开发，仅需在云框架基础上替换部分业务代码，可自行添加kong插件。
+本篇[云框架](ABOUT.md)将结合一个**数据查询应用**介绍KONG API GATEWAY及其最佳实践方法。
 
 # 内容概览
 
@@ -20,9 +19,6 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 * [框架说明-组件](#框架说明-组件)
    * [组件架构](#组件架构)
    * [KONG基本使用](#KONG基本使用)
-      * [注册API](#注册API)
-      * [添加用户](#添加用户)
-      * [API添加插件](#API添加插件)
    * [ROUTING实现](#ROUTING)
    * [AUTHENTICATION实现](#AUTHENTICATION)
    * [SECURITY实现](#SECURITY)
@@ -39,7 +35,7 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 
 # <a name="快速部署"></a>快速部署
 
-1. [准备Docker环境](补充链接)
+1. [准备Docker环境](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/install%20docker.md)
 
 2. 启动两个web站点用于测试
 
@@ -99,36 +95,43 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
->样例提供了2个API接口，一个可以查询所有用户信息；一个查询新闻通知。
->用户信息为敏感数据，我们需要控制访问行为，记录访问日志等。
-可以使用api gateway进行控制，无需在api接口中实现功能，增加额外的逻辑。
-如此，api只专注与本身相关的开发，其他的工作统一交给api gateway管理。
->新闻通知为普通接口数据，只需要api gateway提供路由功能。
+数据查询应用，顾名思义提供简单的数据查询服务，并对外提供两个端口：
+
+* user：处理敏感数据，如限制访问
+
+* newinfo：普通数据对所有人开发
+
+对比以上两个端口，我们可以相对清楚的理解KONG及其插件的效果和配置方法。
+
+本例数据查询应用业务架构比较简明，如下图所示：
+
+<div align=center><img width="900" height="" src="./image/kong业务架构.png"/></div>
 
 # <a name="框架说明-组件"></a>框架说明-组件
 
-Kong是Mashape开源的高性能高可用API网关和API服务管理层。它基于OpenResty，进行API管理，并提供了插件实现API的AOP。
-Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。非常稳定、高效。
-首先我们先了解下Kong这个系统，如下图所示:
+本例使用KONG本身实现ROUTING，并添加了[OAuth 2.0](https://getkong.org/plugins/oauth2-authentication/)（AUTHENTICATION实现）、[Rate Limiting](https://getkong.org/plugins/rate-limiting/)（TRAFFIC CONTROL实现）、[File](https://getkong.org/plugins/file-log/)（LOGGING实现)等3个插件。（[更多官方插件](https://getkong.org/plugins/)）
 
-![Kong](image/intro-illustration.png)
+同时借助了**KONG DASHBOARD**来更方便的管理和配置。
 
-Kong在运行过程中，客户端请求将先请求Kong服务器，然后它会被代理到最终的API应用。而插件在api响应循环的生命周期中被执行。
-Kong的代理方式有两种: 
-* 应用通过携带Host头部路由到对应的API应用
-* 通过不同的uri路由到API应用
-这两种方式都是都是基于Openresty动态增加upstream以及对upstream的DNS resolver来实现。
-插件的各个执行周期则是lua在nginx的各个周期对应。
+<a name="组件架构"></a>组件架构如下图所示：
 
-传统的API结构与Kong API结构对比:
+<div align=center><img width="900" height="" src="./image/kong组件架构.png"/></div>
 
-![Kong API](image/supervisord.png)
+* newinfo端口仅通过KONG实现与user端口的路由，其他插件未使用
 
-## <a name="组件架构"></a>组件架构
+* user端口使用了AUTHENTICATION、TRAFFIC CONTROL、LOGGING等3个插件
 
-* 架构图
+* 客户端先请求KONG服务器，并被代理到最终的API应用
 
-* 架构图说明
+* 插件在API响应循环的生命周期中被执行
+
+* KONG代理方式包括：
+      
+   1. 应用通过携带HOST头部路由到对应的API应用
+      
+   2. 通过不同的uri路由到API应用
+    
+   （以上两种方式均为基于Openresty动态增加upstream以及对upstream的DNS resolver来实现）
 
 ## <a name="KONG基本使用"></a>KONG基本使用
 
@@ -200,7 +203,7 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 ## <a name="ROUTING"></a>ROUTING实现
 
->首先将服务注册到Kong，外部访问统一走api gateway代理。
+首先将服务注册到Kong，外部访问统一走api gateway代理。
 
 >可以通过admin api进行注册，这里使用dashboard处理。
 
@@ -232,7 +235,6 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 >其次添加Consumer，添加Consuer对应的credentials
 
 >![plugin oauth2 credentials person api](image/plugin-person-oauth2user.png)
-
 
 >对于新闻通知，数据不敏感，我们不关心谁在查询，则无需特殊配置。
 
@@ -276,7 +278,7 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 >对于新闻通知接口，无此要求则无需配置该插件。
 
-## <a name="LOGGING"></a>LOGGING
+## <a name="LOGGING"></a>LOGGING实现
 
 >对于用户信息接口，我们希望获取每次访问的日志。
 >Kong提供的LOGGING类插件中有几种都可以满足该要求，日志输出到tcp server、udp server、日志文件、系统日志等。
@@ -296,141 +298,147 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 >对于新闻通知接口，无此要求则无需配置该插件。
 
-
 # <a name="KONG插件开发"></a>KONG插件开发
 
 ## <a name="KONG开发流程"></a>KONG开发流程
 
 1. git clone Kong到本地
-    ```
-    git clone git@github.com:Mashape/kong.git
-    ```
+    
+   ```
+   git clone git@github.com:Mashape/kong.git
+   ```
      
 2. 创建自定义插件目录
-    ```
-    cd ${KONG_DIR}
-    cd kong
-    mkdir custom_plugins
-    ```
+    
+   ```
+   cd ${KONG_DIR}
+   cd kong
+   mkdir custom_plugins
+   ```
      
 3. 新增插件
-    ```
-    cd ${KONG_DIR}
-    cd kong
-    mkdir custom_plugins
-    cd custom_plugins
-    mkdir xxx
-    ```
+    
+   ```
+   cd ${KONG_DIR}
+   cd kong
+   mkdir custom_plugins
+   cd custom_plugins
+   mkdir xxx
+   ```
      
-4. 编辑插件的schema.lua、handler.lua, 根据实际情况完成插件逻辑
+4. 编辑插件的schema.lua、handler.lua, 根据实际情况完成插件逻辑（[lua教程](http://www.runoob.com/lua/lua-tutorial.html)）
 
-5. 修改${KONG_DIR}/templates/kong_defaults.lua，配置custom_plugins=xxx
+5. 修改`${KONG_DIR}/templates/kong_defaults.lua`，配置custom_plugins=xxx
 
 6. 执行luaracks make安装插件到本地进行测试
      
-7. 制作kong镜像，之后参照[快速部署](#快速部署)，修改镜像名称，部署kong
+7. 制作kong镜像，并[快速部署](#快速部署)
 
 ## <a name="#log2zmq"></a>开发示例1:log2zmq
 
-### 插件描述
->这个插件的功能：
->* 获取请求的日志
->* 将日志数据发送到zeromq服务端
+   log2zmq插件用于获取请求的日志并将日志数据发送到zeromq。
 
->首先确认插件注册时需要的参数信息:
->* zeromq的服务器IP地址
->* zeromq的服务器端口
->* zeromq的topic
+1. 确认插件助恶时所需参数信息
 
->之后在custom_plugins中创建log2zmq目录，添加schmea.lua，添加对应的逻辑用于处理API注册。
->
->![自定义组件](image/pluginshow.png)
->
->![log2zmq](image/log2zmq.png)
+   * zeromq服务器IP地址
+   
+   * zeromq服务器端口
+   
+   * zeromq的topic
 
->之后需要处理请求处理过程中插件的逻辑，需要handler.lua脚本完成。
-handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所有的插件都需要继承BasePlugin。
-在BasePlugin中定义了请求处理的几个过程，自定义插件可以通过复写这些方法完成对应的逻辑。
->
->![baseplugin](image/baseplugin.png)
+2. 在custom_plugins中创建log2zmq目录，添加schmea.lua，并添加对应的逻辑用于处理API注册
 
->这个插件需要收集日志，因此复写log方法完成日志收集、发送。
->
->![log2zmq log](image/log2zmqhandler.png)
+<div align=center><img width="900" height="" src="./image/pluginshow.png"/></div>
 
->之后修改kong_default.lua的custom_plugins数据:
+<div align=center><img width="900" height="" src="./image/log2zmq.png"/></div>
 
-```
->custom_plugins = log2zmq
-```
+3. 处理请求处理过程中插件的逻辑，通过handler.lua脚本完成。
 
->本地测试插件功能
-```
->luarocks make
-```
+   handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所有的插件都需要继承BasePlugin。在BasePlugin中定义了请求处理的几个过程，自定义插件可以通过复写这些方法完成对应的逻辑。
 
->制作kong的镜像，将自定义的插件打包到镜像中
->参照快速部署部署自定义kong
+   <div align=center><img width="900" height="" src="./image/baseplugin.png"/></div>
 
-## <a name="#accesslimiting"></a>开发示例1:accesslimiting
+   这个插件需要收集日志，因此复写log方法完成日志收集、发送。
 
-### 插件描述
->这个插件的功能：
->* 过去period分钟内，每个ip限制访问limit次
+   <div align=center><img width="900" height="" src="./image/log2zmqhandler.png"/></div>
 
->首先确认插件注册时需要的参数信息:
->* period，时间间隔
->* limit，ip访问次数限制
+4. 修改kong_default.lua的custom_plugins数据
 
+   ```
+   custom_plugins = log2zmq
+   ```
 
->之后在custom_plugins中创建accesslimiting目录，添加schmea.lua，添加对应的逻辑用于处理API注册。
->
->![accesslimit](image/accesslimit.png)
+5. 本地测试插件功能
 
->之后需要处理请求处理过程中插件的逻辑，需要handler.lua脚本完成。
->这个插件需要存储访问数据，这里演示使用数据库进行存储，使用推荐redis等nosql。
->存储数据除了handler.lua外，还需要定义插件的数据结构、数据库访问方法。
->Kong支持2种数据结构: cassandra\postgres。这里使用postgres
->首先定义表结构，在插件目录下创建migrations/postgres.lua，完成插件的初始化和清理逻辑，如下所示:
+   ```
+   luarocks make
+   ```
 
-```
->mkdir -p ${KONG_DIR}/custom_plugins/xxx/migrations
->touch postgres.lua
->return {
->     {
->         name = "xxxxxxxxx",
->         up = [[
->             CREATE TABLE IF NOT EXISTS ${TABLENAME}(
->                 xx
->             );
->         ]],
->         down = [[
->             DROP TABLE ${TABLENAME};
->         ]]
->     }
-> }
-```
+6. 制作KONG的镜像，将自定义的插件打包到镜像中，并[快速部署](#快速部署)自定义KONG
 
->之后完成数据的访问，在插件目录下创建dao/postgres.lua
->![accesslimit dao](image/accesslimitdao.png)
+## <a name="#accesslimiting"></a>开发示例2:accesslimiting
 
+accesslimiting插件用于定义过去`period`分钟内，每个ip限制访问`limit`次
 
->这个插件在请求访问前确认是访问，因此复写access方法完成访问校验。
->![accesslimit handler](image/accesslimithandler.png)
+1. 确认插件注册时需要的参数信息:
 
->之后修改kong_default.lua的custom_plugins数据:
+   * 时间间隔`period`
+   
+   * ip访问次数限制`limit`
 
-```
->custom_plugins = log2zmq, accesslimit
-```
+2. 在custom_plugins中创建accesslimiting目录，添加schmea.lua，添加对应的逻辑用于处理API注册
 
->本地测试插件功能
-```
->luarocks make
-```
+<div align=center><img width="900" height="" src="./image/accesslimit.png"/></div>
 
->制作kong的镜像，将自定义的插件打包到镜像中
->参照快速部署部署自定义kong
+3. 处理请求处理过程中插件的逻辑，需要handler.lua脚本完成
+
+   accesslimiting插件需要存储访问数据，因此这里演示使用数据库进行存储（推荐redis等nosql）。存储数据除了handler.lua外，还需要定义插件的数据结构、数据库访问方法，而Kong支持2种数据结构: cassandra\postgres，这里使用postgres。
+
+   3.1 定义表结构，在插件目录下创建migrations/postgres.lua，完成插件的初始化和清理逻辑，如下所示:
+   
+   ```
+   mkdir -p ${KONG_DIR}/custom_plugins/xxx/migrations
+   touch postgres.lua
+   return {
+        {
+            name = "xxxxxxxxx",
+            up = [[
+                CREATE TABLE IF NOT EXISTS ${TABLENAME}(
+                    xx
+                );
+            ]],
+            down = [[
+                DROP TABLE ${TABLENAME};
+            ]]
+        }
+    }
+   ```
+
+   3.2 完成数据的访问，并在插件目录下创建dao/postgres.lua
+
+   <div align=center><img width="900" height="" src="./image/accesslimitdao.png"/></div>
+   
+   3.3 本插件在请求访问前确认是访问，因此复写access方法完成访问校验
+
+   <div align=center><img width="900" height="" src="./image/accesslimithandler.png"/></div>
+
+4. 之后修改kong_default.lua的custom_plugins数据:
+
+   ```
+   custom_plugins = log2zmq, accesslimit
+   ```
+
+5. 本地测试插件功能
+
+   ```
+   luarocks make
+   ```
+
+6. 制作KONG的镜像，将自定义的插件打包到镜像中，并[快速部署](#快速部署)自定义KONG
+
+# <a name="#生产环境"></a>生产环境
+
+`TODO`
 
 # <a name="#常见问题"></a>常见问题
 
