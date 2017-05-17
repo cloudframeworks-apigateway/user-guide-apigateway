@@ -23,12 +23,12 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
       * [注册API](#注册API)
       * [添加用户](#添加用户)
       * [API添加插件](#API添加插件)
-   * [ROUTING](#ROUTING)
-   * [AUTHENTICATION](#AUTHENTICATION)
-   * [SECURITY](#SECURITY)
-   * [TRAFFIC CONTROL](#TRAFFICCONTROL)
-   * [LOGGING](#LOGGING)
-* [KONG插件开发](#KONG使用)
+   * [ROUTING实现](#ROUTING)
+   * [AUTHENTICATION实现](#AUTHENTICATION)
+   * [SECURITY实现](#SECURITY)
+   * [TRAFFIC CONTROL实现](#TRAFFICCONTROL)
+   * [LOGGING实现](#LOGGING)
+* [KONG插件开发](#KONG插件开发)
    * [开发流程](#开发流程)
    * [开发示例1:log2zmq](#log2zmq)
    * [开发实例2:accesslimiting](#accesslimiting)
@@ -37,3 +37,58 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 * [更新计划](#更新计划)
 * [社群贡献](#社群贡献)
 
+# <a name="快速部署"></a>快速部署
+
+@丽川
+
+# <a name="框架说明-业务"></a>框架说明-业务
+
+# <a name="框架说明-组件"></a>框架说明-组件
+
+## <a name="组件架构"></a>组件架构
+
+## <a name="KONG基本使用"></a>KONG基本使用
+
+### <a name="注册API"></a>注册API
+
+### <a name="添加用户"></a>添加用户
+
+### <a name="API添加插件"></a>API添加插件
+
+## <a name="ROUTING"></a>ROUTING实现
+
+## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
+
+## <a name="SECURITY"></a>SECURITY实现
+
+## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
+
+## <a name="LOGGING"></a>LOGGING实现
+
+# <a name="KONG插件开发"></a>KONG插件开发
+
+## <a name="KONG开发流程"></a>KONG开发流程
+
+## <a name="#log2zmq"></a>开发示例1:log2zmq
+
+## <a name="#accesslimiting"></a>开发示例1:accesslimiting
+
+# <a name="#常见问题"></a>常见问题
+
+`TODO`
+
+# <a name="#更新计划"></a>更新计划
+
+* `组件` 增加SERVERLESS实现
+* `组件` 增加ANALYTICS&MONITORING实现
+* `组件` 增加TRANSFORMATIONS实现
+
+# <a name="#社群贡献"></a>社群贡献
+
++ QQ群: 
++ [参与贡献](CONTRIBUTING.md)
++ [联系我们](mailto:info@goodrain.com)
+
+-------
+
+[云框架](ABOUT.md)系列主题，遵循[APACHE LICENSE 2.0](LICENSE.md)协议发布。
