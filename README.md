@@ -99,7 +99,7 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
-@丽川
+@丽川 尽情描述，完了我编辑
 
 # <a name="框架说明-组件"></a>框架说明-组件
 
