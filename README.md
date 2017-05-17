@@ -194,29 +194,29 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 ```
 ![kong key auth success](image/keyauthfailed.png)
 
-## <a name="ROUTING"></a>ROUTING实现
+## <a name="ROUTING"></a>ROUTING实现@丽川
 
-@丽川 两个应用放一起讲
+* 展现是怎样的，怎么配置的，两应用放一起讲
 
-## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
-
-* 有插件应用展现是怎样的，怎么配置的
-
-* 无插件应用展现是怎样的，怎么配置的
-
-## <a name="SECURITY"></a>SECURITY实现
+## <a name="AUTHENTICATION"></a>AUTHENTICATION实现@丽川
 
 * 有插件应用展现是怎样的，怎么配置的
 
 * 无插件应用展现是怎样的，怎么配置的
 
-## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
+## <a name="SECURITY"></a>SECURITY实现@丽川
 
 * 有插件应用展现是怎样的，怎么配置的
 
 * 无插件应用展现是怎样的，怎么配置的
 
-## <a name="LOGGING"></a>LOGGING实现
+## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现@丽川
+
+* 有插件应用展现是怎样的，怎么配置的
+
+* 无插件应用展现是怎样的，怎么配置的
+
+## <a name="LOGGING"></a>LOGGING实现@丽川
 
 * 有插件应用展现是怎样的，怎么配置的
 
