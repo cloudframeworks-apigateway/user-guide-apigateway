@@ -109,7 +109,7 @@
 
 # <a name="框架说明-组件"></a>框架说明-组件
 
-本例使用KONG本身实现ROUTING，并添加了[OAuth 2.0](https://getkong.org/plugins/oauth2-authentication/)（AUTHENTICATION实现）、[Rate Limiting](https://getkong.org/plugins/rate-limiting/)（TRAFFIC CONTROL实现）、[File](https://getkong.org/plugins/file-log/)（LOGGING实现)等3个插件。（[查看更多官方插件](https://getkong.org/plugins/)）
+本例使用KONG本身实现ROUTING，并添加了[OAuth 2.0](https://getkong.org/plugins/oauth2-authentication/)（AUTHENTICATION实现）、[IP Restriction](https://getkong.org/plugins/ip-restriction/)（SECURITY实现）、[Rate Limiting](https://getkong.org/plugins/rate-limiting/)（TRAFFIC CONTROL实现）、[File](https://getkong.org/plugins/file-log/)（LOGGING实现)等3个插件。（[查看更多官方插件](https://getkong.org/plugins/)）
 
 同时借助了**KONG DASHBOARD**(KONG的UI管理界面)来更方便的管理和配置。
 
