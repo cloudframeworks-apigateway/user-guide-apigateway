@@ -16,30 +16,27 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 # 内容概览
 
 * [快速部署](#快速部署)
-* [框架说明-业务](#框架说明-业务)
-* [框架说明-组件](#框架说明-组件)
-   * [组件架构](#组件架构)
-   * [KONG基本使用](#KONG基本使用)
-      * [注册API](#注册API)
-      * [添加用户](#添加用户)
-      * [API添加插件](#API添加插件)
-   * [ROUTING实现](#ROUTING)
-   * [AUTHENTICATION实现](#AUTHENTICATION)
-   * [SECURITY实现](#SECURITY)
-   * [TRAFFIC CONTROL实现](#TRAFFICCONTROL)
-   * [LOGGING实现](#LOGGING)
+* [KONG说明](#KONG说明)
+   * [KONG描述](#KONG描述)
+   * [KONG插件](#KONG插件)
+* [KONG使用](#KONG使用)
+   * [注册API](#注册API)
+   * [添加用户](#添加用户)
+   * [API添加插件](#API添加插件)
 * [KONG插件开发](#KONG插件开发)
    * [开发流程](#开发流程)
-   * [开发示例1:log2zmq](#log2zmq)
-   * [开发实例2:accesslimiting](#accesslimiting)
+   * [log2zmq](#log2zmq)
+   * [accesslimiting](#accesslimiting)
 * [生产环境](#生产环境)
 * [常见问题](#常见问题)
 * [更新计划](#更新计划)
 * [社群贡献](#社群贡献)
 
-# <a name="快速部署"></a>快速部署
+# <a name="快速部署">快速部署</a>
 
-1. [准备Docker环境](补充链接)
+## <a name="镜像部署">镜像部署</a>
+
+1. 准备Docker环境
 
 2. 启动两个web站点用于测试
 
@@ -97,11 +94,9 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
    
    http://127.0.0.1:9002 - nginx demo2 url
 
-# <a name="框架说明-业务"></a>框架说明-业务
+# <a name="KONG说明">KONG说明</a>
 
-@丽川 尽情描述，完了我编辑
-
-# <a name="框架说明-组件"></a>框架说明-组件
+## <a name="KONG描述">KONG描述</a>
 
 Kong是Mashape开源的高性能高可用API网关和API服务管理层。它基于OpenResty，进行API管理，并提供了插件实现API的AOP。
 Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。非常稳定、高效。
@@ -120,15 +115,33 @@ Kong的代理方式有两种:
 
 ![Kong API](image/supervisord.png)
 
-## <a name="组件架构"></a>组件架构
 
-* 架构图
+## <a name="KONG插件">KONG插件</a>
 
-* 架构图说明
+Kong默认提供了7类共31种插件(v0.10.2):
+* Authentication
+![Authentication](image/authentication.png)
+* Security
+![Security](image/security.png)
+* Traffic Control
+![Traffic Control](image/trafficcontrol.png)
+* Serverless
+![Serverless](image/serverless.png)
+* Analytics & Monitoring
+![Analytics & Monitoring](image/analyticsmonitoring.png)
+* Transformations
+![Transformations](image/transformations.png)
+* Logging
+![Logging](image/logging.png)
 
-## <a name="KONG基本使用"></a>KONG基本使用
+这些插件可以满足大多数的需求，对于无法满足的业务需求，Kong提供扩展功能，用户可以自定义Kong插件。
+后面以2个插件为例来说明Kong的扩展插件步骤。
 
-### <a name="注册API"></a>注册API
+# <a name="KONG使用">KONG使用</a>
+
+Kong对外提供rest api进行管理。详见[Kong admin api](https://getkong.org/docs/0.10.x/admin-api/)
+
+## <a name="注册API">注册API</a>
 
 使用Kong代理API，首先需要把API注册到Kong。
 我们可以通过命令行进行添加:
@@ -150,7 +163,7 @@ curl -i -X POST \
 
 上面我们将9001的nginx注册到Kong
 
-### <a name="添加用户"></a>添加用户
+## <a name="添加用户">添加用户</a>
 
 对于API来讲，有可能没有用户概念，用户可以随意调用。
 对于这种情况，Kong提供了一种consumer对象。
@@ -163,7 +176,8 @@ consumer是全局共用的，比如某个API启用了key-auth,那么没有身份
 
 ![kong key_auth add](image/keyauth.png)
 
-### <a name="API添加插件"></a>API添加插件
+
+## <a name="API添加插件">API添加插件</a>
 
 Kong默认提供了31种[插件](#Kong插件)。
 Kong的插件独立作用于每一个API，不同的API可以使用完全不同的插件。
@@ -194,37 +208,10 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 ```
 ![kong key auth success](image/keyauthfailed.png)
 
-## <a name="ROUTING"></a>ROUTING实现@丽川
 
-* 展现是怎样的，怎么配置的，两应用放一起讲
+# <a name="KONG插件开发">KONG插件开发</a>
 
-## <a name="AUTHENTICATION"></a>AUTHENTICATION实现@丽川
-
-* 有插件应用展现是怎样的，怎么配置的
-
-* 无插件应用展现是怎样的，怎么配置的
-
-## <a name="SECURITY"></a>SECURITY实现@丽川
-
-* 有插件应用展现是怎样的，怎么配置的
-
-* 无插件应用展现是怎样的，怎么配置的
-
-## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现@丽川
-
-* 有插件应用展现是怎样的，怎么配置的
-
-* 无插件应用展现是怎样的，怎么配置的
-
-## <a name="LOGGING"></a>LOGGING实现@丽川
-
-* 有插件应用展现是怎样的，怎么配置的
-
-* 无插件应用展现是怎样的，怎么配置的
-
-# <a name="KONG插件开发"></a>KONG插件开发
-
-## <a name="KONG开发流程"></a>KONG开发流程
+## <a name="开发流程">开发流程</a>
 
 1. git clone Kong到本地
     ```
@@ -255,7 +242,8 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
      
 7. 制作kong镜像，之后参照[快速部署](#快速部署)，修改镜像名称，部署kong
 
-## <a name="#log2zmq"></a>开发示例1:log2zmq
+
+## <a name="log2zmq">log2zmq</a>
 
 ### 插件描述
 >这个插件的功能：
@@ -284,21 +272,20 @@ handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所
 >![log2zmq log](image/log2zmqhandler.png)
 
 >之后修改kong_default.lua的custom_plugins数据:
-
-```
+>```
 >custom_plugins = log2zmq
-```
+>```
 
 >本地测试插件功能
-```
+>```
 >luarocks make
-```
+>```
 
 >制作kong的镜像，将自定义的插件打包到镜像中
 >参照快速部署部署自定义kong
 
-## <a name="#accesslimiting"></a>开发示例1:accesslimiting
 
+## <a name="accesslimiting">accesslimiting</a>
 ### 插件描述
 >这个插件的功能：
 >* 过去period分钟内，每个ip限制访问limit次
@@ -317,8 +304,7 @@ handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所
 >存储数据除了handler.lua外，还需要定义插件的数据结构、数据库访问方法。
 >Kong支持2种数据结构: cassandra\postgres。这里使用postgres
 >首先定义表结构，在插件目录下创建migrations/postgres.lua，完成插件的初始化和清理逻辑，如下所示:
-
-```
+>```
 >mkdir -p ${KONG_DIR}/custom_plugins/xxx/migrations
 >touch postgres.lua
 >return {
@@ -334,7 +320,7 @@ handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所
 >         ]]
 >     }
 > }
-```
+>```
 
 >之后完成数据的访问，在插件目录下创建dao/postgres.lua
 >![accesslimit dao](image/accesslimitdao.png)
@@ -344,30 +330,42 @@ handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所
 >![accesslimit handler](image/accesslimithandler.png)
 
 >之后修改kong_default.lua的custom_plugins数据:
-
-```
+>```
 >custom_plugins = log2zmq, accesslimit
-```
+>```
 
 >本地测试插件功能
-```
+>```
 >luarocks make
-```
+>```
 
 >制作kong的镜像，将自定义的插件打包到镜像中
 >参照快速部署部署自定义kong
 
-# <a name="#常见问题"></a>常见问题
+     
+# <a name="生产环境"></a>生产环境
 
-`TODO`
+* `TODO` CI/CD
+* `TODO` 扩容
+* `TODO` 服务容错
+* `TODO` 业务监控／性能分析
+* `TODO` K8s部署
 
-# <a name="#更新计划"></a>更新计划
+# <a name="常见问题"></a>常见问题
 
-* `组件` 增加SERVERLESS实现
-* `组件` 增加ANALYTICS&MONITORING实现
-* `组件` 增加TRANSFORMATIONS实现
+任何相关问题均可通过[GitHub ISSUE](https://github.com/cloudframeworks-springcloud/user-guide/issues)提交或讨论，问题总结请查看[[QA](QA.md)]
 
-# <a name="#社群贡献"></a>社群贡献
+# <a name="更新计划"></a>更新计划
+
+* `文档` 增加
+* `组件` 增加
+* `生产环境` 增加
+* `快速部署` 增加
+* `常见问题` 问题
+
+点击查看[历史更新](CHANGELOG.md)
+
+# <a name="社群贡献"></a>社群贡献
 
 + QQ群: 
 + [参与贡献](CONTRIBUTING.md)
