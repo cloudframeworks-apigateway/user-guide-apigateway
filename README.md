@@ -157,11 +157,9 @@ Dashboard：
 
 ### <a name="添加用户"></a>添加用户
 
-对于API来讲，有可能没有用户概念，即用户可以随意调用。Kong为这种情况提供了一种consumer对象。
+API可能没有用户概念，可以随意调用。Kong为这种情况提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API。
 
-consumer是全局共用的，比如某个API启用了key-auth，那么没有身份的访问者就无法调用这个API了。
-
-首先创建一个Consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
+首先创建一个consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
 
 如果另外一个API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，如果要控制这种情况，就需要Kong的ACL插件。
 
@@ -229,11 +227,11 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 在Kong的AUTHENTICATION类插件中多种，其中Oauth2认证是最为广泛的。这里我们使用OAuth 2.0 Authentication插件。
 
-首先我们注册Oauth2插件。详细可以参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)
+首先我们注册Oauth2插件，参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
 <div align=center><img width="600" height="" src="./image/plugin-person-oauth2.png"/></div>
 
-其次添加Consumer，添加Consuer对应的credentials
+其次添加Consumer，添加Consumer对应的credentials
 
 <div align=center><img width="600" height="" src="./image/plugin-person-oauth2user.png"/></div>
 
