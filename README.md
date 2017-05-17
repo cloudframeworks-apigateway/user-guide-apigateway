@@ -99,7 +99,11 @@ Api Gateway框架有很多，包括kong(Mashape开源)、microgateway(IBM开源)
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
-@丽川 尽情描述，完了我编辑
+>样例提供了2个API接口，一个可以查询所有用户信息；一个查询新闻通知。
+>用户信息为敏感数据，我们需要控制访问行为，记录访问日志等。
+可以使用api gateway进行控制，无需在api接口中实现功能，增加额外的逻辑。
+如此，api只专注与本身相关的开发，其他的工作统一交给api gateway管理。
+>新闻通知为普通接口数据，只需要api gateway提供路由功能。
 
 # <a name="框架说明-组件"></a>框架说明-组件
 
@@ -194,33 +198,80 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 ```
 ![kong key auth success](image/keyauthfailed.png)
 
-## <a name="ROUTING"></a>ROUTING实现@丽川
+## <a name="ROUTING"></a>ROUTING实现
 
-* 展现是怎样的，怎么配置的，两应用放一起讲
+>首先将服务注册到Kong，外部访问统一走api gateway代理。
+>可以通过admin api进行注册，这里使用dashboard处理。
 
-## <a name="AUTHENTICATION"></a>AUTHENTICATION实现@丽川
+>* 注册用户信息api
+>![person api](image/new-personadd.png)
+>* 注册新闻通知api
+>![newinfo api](image/new-newinfoadd.png)
 
-* 有插件应用展现是怎样的，怎么配置的
+>注册后可以通过Kong代理访问用户信息、消息通知
+>![kong proxy person api](image/kong-proxyperson.png)
+>![kong proxy newinfo api](image/kong-proxynewinfo.png)
 
-* 无插件应用展现是怎样的，怎么配置的
+>此时，可以将用户信息、新闻通知对外访问控制限制为只有Kong可以访问，外部请求全部通过Kong进行代理。
 
-## <a name="SECURITY"></a>SECURITY实现@丽川
+## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
-* 有插件应用展现是怎样的，怎么配置的
+> 对于用户信息数据，我们不希望对外公开，限制访问的用户。在Kong的AUTHENTICATION类插件中多种，其中Oauth2认证是最为广泛的。
+这里我们使用OAuth 2.0 Authentication插件。
+>首先我们注册Oauth2插件。详细可以参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)
+>![plugin oauth2 person api](image/plugin-person-oauth2.png)
+>其次添加Consumer，添加Consuer对应的credentials
+>![plugin oauth2 credentials person api](image/plugin-person-oauth2user.png)
+>
 
-* 无插件应用展现是怎样的，怎么配置的
+>对于新闻通知，数据不敏感，我们不关心谁在查询，则无需特殊配置。
 
-## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现@丽川
+## <a name="SECURITY"></a>SECURITY实现
 
-* 有插件应用展现是怎样的，怎么配置的
+>对于用户信息接口，我们希望控制其访问的地址，只有我们规定的IP地址可以访问。其他均不能访问该API。
+>Kong提供的SECURITY类插件中有IP Restriction插件可以实现。
 
-* 无插件应用展现是怎样的，怎么配置的
+>首先给用户信息接口添加IP Restriction插件扩展，这里我们设置白名单，只有名单内的IP可以访问API。
+>![plugin ip person api](image/plugin-person-ip.png)
 
-## <a name="LOGGING"></a>LOGGING实现@丽川
+>对于正常访问，展示如下:
+>![kong proxy person api](image/kong-proxyperson.png)
+>对于其他IP访问，展示如下:
+>![kong proxy person api ipfail](image/kong-proxyperson-ipfail.png)
 
-* 有插件应用展现是怎样的，怎么配置的
+>对于新闻通知接口，无此要求则无需配置该插件。
 
-* 无插件应用展现是怎样的，怎么配置的
+## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
+
+>对于用户信息接口，我们希望控制其访问频率，不是无限制的访问。
+>Kong提供的TRAFFIC CONTROL类插件中有rate limiting，可以满足该要求。
+
+>首先给用户信息接口添加rate limiting插件扩展，这里我们设置为1min中只能访问1次。
+>![plugin ratelimiting person api](image/plugin-person-ratelimiting.png)
+
+>对于正常访问，展示如下:
+>![kong proxy person api](image/kong-proxyperson.png)
+>对于超出次数的访问，展示如下:
+>![kong proxy person api failed](image/kong-proxyperson-ratefail.png)
+
+>对于新闻通知接口，无此要求则无需配置该插件。
+
+## <a name="LOGGING"></a>LOGGING
+
+>对于用户信息接口，我们希望获取每次访问的日志。
+>Kong提供的LOGGING类插件中有几种都可以满足该要求，日志输出到tcp server、udp server、日志文件、系统日志等。
+>这里我们使用file-log插件。
+
+>首先给用户信息接口添加file-log插件，这里我们设置为日志文件路径设为:/tmp/file.log.
+>![plugin filelog person api](image/plugin-person-filelog.png)
+>备注: 日志文件一定要有写权限
+
+>添加日志插件后，每次访问，都会记录访问记录:
+>![kong proxy person api](image/kong-proxyperson-filelog.png)
+>日志格式可以参考[Log Format](https://getkong.org/plugins/file-log/#log-format)
+
+>对于新闻通知接口，无此要求则无需配置该插件。
+
 
 # <a name="KONG插件开发"></a>KONG插件开发
 
