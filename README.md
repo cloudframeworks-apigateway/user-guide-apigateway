@@ -92,7 +92,7 @@
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
-数据查询应用，顾名思义提供简单的数据查询服务，并对外提供两个端口：
+数据查询应用，顾名思义提供简单的数据查询服务，应用对外提供两个端口：
 
 * user：处理敏感数据，如限制访问
 
@@ -108,7 +108,7 @@
 
 本例使用KONG本身实现ROUTING，并添加了[OAuth 2.0](https://getkong.org/plugins/oauth2-authentication/)（AUTHENTICATION实现）、[IP Restriction](https://getkong.org/plugins/ip-restriction/)（SECURITY实现）、[Rate Limiting](https://getkong.org/plugins/rate-limiting/)（TRAFFIC CONTROL实现）、[File](https://getkong.org/plugins/file-log/)（LOGGING实现)等4个插件。（[查看更多官方插件](https://getkong.org/plugins/)）
 
-同时借助了[KONG DASHBOARD](https://github.com/cloudframeworks-apigateway/docker-kong-dashboard)(KONG的UI管理界面)来更方便的管理和配置，KONG的管理和配置同时支持命令行方式，具体请查看[KONG命令行](kong命令行.md)。
+以下管理配置通过命令行实现，或可查看通过KONG的UI管理界面方法[KONG DASHBOARD](kongdashboard方法.md)。
 
 <a name="组件架构"></a>组件架构如下图所示：
 
