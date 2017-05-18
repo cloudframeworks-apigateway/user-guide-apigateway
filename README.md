@@ -116,11 +116,11 @@
 
 * newinfo端口仅通过KONG实现与user端口的路由，其他插件未使用
 
-    + KONG代理方式包括：1）应用通过携带HOST头部路由到对应的API应用；2）通过不同的uri路由到API应用
+   + KONG代理方式包括：1）应用通过携带HOST头部路由到对应的API应用；2）通过不同的uri路由到API应用
     
-    + 以上两种方式均为基于Openresty动态增加upstream以及对upstream的DNS resolver来实现
+   + 以上两种方式均为基于Openresty动态增加upstream以及对upstream的DNS resolver来实现
     
-    + 客户端将先请求KONG服务器，并被代理到最终的API应用，而插件在API响应循环的生命周期中被执行
+   + 客户端将先请求KONG服务器，并被代理到最终的API应用，而插件在API响应循环的生命周期中被执行
 
 * user端口信息敏感，限制访问用户；newinfo端口信息不敏感，无需限制访问用户（AUTHENTICATION实现）
 
@@ -150,9 +150,9 @@ API可能没有用户概念，可以随意调用。Kong为这种情况提供了�
 
 需要注意的是：
 
-* 若另一API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，想要控制这种情况，需借助Kong的[ACL插件](https://getkong.org/plugins/acl/)。
+* 若另一API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，想要控制这种情况，需借助Kong的[ACL插件](https://getkong.org/plugins/acl/)
 
-* **对于Kong来讲，认证与权限是两个不同的东西**。
+* 对于Kong来讲，认证与权限是两个不同的东西
 
 ### <a name="API添加插件"></a>API添加插件
 
