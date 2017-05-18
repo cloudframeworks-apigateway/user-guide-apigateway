@@ -12,15 +12,15 @@ log2zmq插件用于获取请求的日志并将日志数据发送到zeromq。
 
 2. 在custom_plugins中创建log2zmq目录，添加schmea.lua，并添加对应的逻辑用于处理API注册
 
-   <div align=center><img width="600" height="" src="./image/pluginshow.png"/></div>
+<div align=center><img width="600" height="" src="./image/pluginshow.png"/></div>
 
-   <div align=center><img width="600" height="" src="./image/log2zmq.png"/></div>
+<div align=center><img width="600" height="" src="./image/log2zmq.png"/></div>
 
 3. 处理请求处理过程中插件的逻辑，通过handler.lua脚本完成。
 
    handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所有的插件都需要继承BasePlugin。在BasePlugin中定义了请求处理的几个过程，自定义插件可以通过复写这些方法完成对应的逻辑。
 
-   <div align=center><img width="600" height="" src="./image/baseplugin.png"/></div>
+   <div align=center><img width="600" height="" src="./image/baseplugin.png"/></div>
 
    这个插件需要收集日志，因此复写log方法完成日志收集、发送。
 
