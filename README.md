@@ -302,7 +302,7 @@ newinfo端口无需配置此插件。
 
 # <a name="#社群贡献"></a>社群贡献
 
-+ QQ群: 
++ QQ群: 117317266
 + [参与贡献](CONTRIBUTING.md)
 + [联系我们](mailto:info@goodrain.com)
 
