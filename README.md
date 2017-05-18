@@ -1,7 +1,7 @@
 # [云框架]KONG API Gateway
 
 ![](https://img.shields.io/badge/release-v0.1-green.svg)
-[![](https://img.shields.io/badge/Producer-woodyalen202-orange.svg)](CONTRIBUTORS.md)
+[![](https://img.shields.io/badge/Producer-lucienu2-orange.svg)](CONTRIBUTORS.md)
 ![](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
 当我们决定对应用进行微服务改造时，应用客户端如何与微服务交互的问题也随之而来，毕竟服务数量的增加会直接导致部署授权、负载均衡、通信管理、分析和改变的难度增加。
