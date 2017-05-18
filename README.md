@@ -126,7 +126,7 @@
 
 * user端口控制访问地址，仅规定IP可访问；newinfo端口无此限制（SECURITY实现）
 
-* user端口控制访问频率，info端口可无限制访问（TRAFFIC CONTROL实现）
+* user端口控制访问频率，newinfo端口可无限制访问（TRAFFIC CONTROL实现）
 
 * user端口可获取每次访问日志（LOGGING实现）
 
