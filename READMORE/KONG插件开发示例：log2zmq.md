@@ -20,11 +20,11 @@ log2zmq插件用于获取请求的日志并将日志数据发送到zeromq。
 
    handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所有的插件都需要继承BasePlugin。在BasePlugin中定义了请求处理的几个过程，自定义插件可以通过复写这些方法完成对应的逻辑。
 
-   <div align=center><img width="600" height="" src="./image/baseplugin.png"/></div>
+<div align=center><img width="600" height="" src="./image/baseplugin.png"/></div>
 
    这个插件需要收集日志，因此复写log方法完成日志收集、发送。
 
-   <div align=center><img width="600" height="" src="./image/log2zmqhandler.png"/></div>
+<div align=center><img width="600" height="" src="./image/log2zmqhandler.png"/></div>
 
 4. 修改kong_default.lua的custom_plugins数据
 
