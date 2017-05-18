@@ -1,1 +1,17 @@
+# KONG DASHBOARD方法
 
+## 注册API
+
+## 添加用户
+
+## API添加插件
+
+## ROUTING实现
+
+## AUTHENTICATION实现
+
+## SECURITY实现
+
+## TRAFFIC CONTROL实现
+
+## LOGGING实现
