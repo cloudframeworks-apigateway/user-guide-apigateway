@@ -119,37 +119,25 @@
 
 * newinfo端口仅通过KONG实现与user端口的路由，其他插件未使用
 
-* user端口使用了AUTHENTICATION、TRAFFIC CONTROL、LOGGING等3个插件
+   * KONG代理方式包括：1）应用通过携带HOST头部路由到对应的API应用；2）通过不同的uri路由到API应用
+   
+   * 以上两种方式均为基于Openresty动态增加upstream以及对upstream的DNS resolver来实现
+   
+   * 客户端将先请求KONG服务器，并被代理到最终的API应用，而插件在API响应循环的生命周期中被执行
 
-* 客户端先请求KONG服务器，并被代理到最终的API应用
+* user端口信息敏感，限制访问用户；newinfo端口信息不敏感，无需限制访问用户（AUTHENTICATION实现）
 
-* 插件在API响应循环的生命周期中被执行
+* user端口控制访问地址，仅规定IP可访问；newinfo端口无此限制（SECURITY实现）
 
-* KONG代理方式包括：
-      
-   1. 应用通过携带HOST头部路由到对应的API应用
-      
-   2. 通过不同的uri路由到API应用
-    
-   （以上两种方式均为基于Openresty动态增加upstream以及对upstream的DNS resolver来实现）
+* user端口控制访问频率，info端口可无限制访问（TRAFFIC CONTROL实现）
 
-## <a name="KONG基本使用"></a>KONG基本使用
+* user端口可获取每次访问日志（LOGGING实现）
+
+## <a name="KONG基本使用"></a>KONG基本使用 （需匹配实例）
 
 ### <a name="注册API"></a>注册API
 
-使用Kong代理API，首先需要把API注册到Kong，可通过命令行添加，并通过返回数据判断注册是否成功；也可以通过kong-dashboard进行添加，并在在API列表页查看，如下将9001的nginx注册到Kong：
-
-命令行：
-
-```
-curl -i -X POST \
-      --url http://127.0.0.1:8001/apis/ \
-      --data 'name=nginxfirst' \
-      --data 'hosts=nginxfirst' \
-      --data 'upstream_url=http://xx.xx.xx.xx:9001/'
-```
-
-Dashboard：
+使用Kong代理API，首先需要把API注册到Kong，并在在API列表页查看，如下将9001的nginx注册到Kong：
 
 <div align=center><img width="600" height="" src="./image/apiadd.png"/></div>
 
@@ -161,49 +149,27 @@ API可能没有用户概念，可以随意调用。Kong为这种情况提供了�
 
 首先创建一个consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
 
-如果另外一个API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，如果要控制这种情况，就需要Kong的ACL插件。
-
-这里需要特别注意的是，**对于Kong来讲，认证与权限是两个不同的东西**。
-
 <div align=center><img width="600" height="" src="./image/keyauth.png"/></div>
+
+需要注意的是：
+
+* 若另一API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，想要控制这种情况，需借助Kong的[ACL插件](https://getkong.org/plugins/acl/)。
+
+* **对于Kong来讲，认证与权限是两个不同的东西**。
 
 ### <a name="API添加插件"></a>API添加插件
 
-目前，Kong默认提供了31种插件，插件独立作用于每一个API，不同的API可以使用完全不同的插件。这是一种非常科学的设计，例如在实际情况中有的API完全开放，不需要任何认证，有的API会涉及敏感数据，权限控制需要非常严格；有的API完全不在乎调用频次或者日志，有的API则严格限制调用频次或者日志。
+目前，Kong默认提供了31种插件，插件独立作用于每一个API，不同的API可以使用完全不同的插件。
+
+这是一种非常科学的设计，因为在实际情况中很可能会出现有的API完全开放，不需要任何认证，有的API会涉及敏感数据，权限控制需要非常严格；有的API完全不在乎调用频次或者日志，有的API则严格限制调用频次或者日志等类似情况。
 
 如为前面注册的9001nginx添加访问控制，所有通过验证的请求可以访问，而验证失败请求则不能：
 
-命令行：
-
-```
-curl -i -X POST \
-  --url http://127.0.0.1:8001/apis/nginxfirst/plugins/ \
-  --data 'name=key-auth'
-```
-
-Dashboard：
-
 <div align=center><img width="600" height="" src="./image/pluginadd.png"/></div>
-
-另外，可通过命令行进行访问验证:
-
-```
-curl -H 'Host: nginxfirst' -H 'TT: e9da671f5c5d44d5bfdca95585283979' http://127.0.0.1:8000
-```
-
-<div align=center><img width="600" height="" src="./image/keyauthsucc.png"/></div>
-
-```
-curl -H 'Host: nginxfirst' http://127.0.0.1:8000
-```
-
-<div align=center><img width="600" height="" src="./image/keyauthfailed.png"/></div>
 
 ## <a name="ROUTING"></a>ROUTING实现
 
-首先将服务注册到Kong，外部访问统一走api gateway代理。
-
-可以通过admin api进行注册，这里使用dashboard处理。
+user端口和newinfo端口之间实现路由，需先将服务注册到Kong，外部访问将统一走api gateway代理。
 
 * 注册user api
 
@@ -213,7 +179,7 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 <div align=center><img width="600" height="" src="./image/new-newinfoadd.png"/></div>
 
-注册成功后即可通过Kong代理访问用户信息、消息通知
+注册成功后即可通过Kong代理访问用户信息（user端口）、新闻信息（newinfo端口）
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
@@ -223,79 +189,67 @@ curl -H 'Host: nginxfirst' http://127.0.0.1:8000
 
 ## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
-对于用户信息数据，我们不希望对外公开，限制访问的用户。
+通过OAuth 2.0 Authentication插件实现user端口的用户访问限制，
 
-在Kong的AUTHENTICATION类插件中多种，其中Oauth2认证是最为广泛的。这里我们使用OAuth 2.0 Authentication插件。
-
-首先我们注册Oauth2插件，参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
+* 注册Oauth2插件，参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
 <div align=center><img width="600" height="" src="./image/plugin-person-oauth2.png"/></div>
 
-其次添加Consumer，添加Consumer对应的credentials
+* 添加Consumer及Consumer对应的credentials
 
 <div align=center><img width="600" height="" src="./image/plugin-person-oauth2user.png"/></div>
 
-对于新闻通知，数据不敏感，我们不关心谁在查询，则无需特殊配置。
+newinfo端口由于数据不敏感，无需特殊配置。
 
 ## <a name="SECURITY"></a>SECURITY实现
 
-对于用户信息接口，我们希望控制其访问的地址，只有我们规定的IP地址可以访问。其他均不能访问该API。
+通过添加IP Restriction插件，实现对user端口的访问限制，即仅规定IP可访问。
 
-Kong提供的SECURITY类插件中有IP Restriction插件可以实现。
-
-首先给用户信息接口添加IP Restriction插件扩展，这里我们设置白名单，只有名单内的IP可以访问API。
+* 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）。
 
 <div align=center><img width="600" height="" src="./image/plugin-person-ip.png"/></div>
 
-对于正常访问，展示如下:
+白名单内IP访问：
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
-对于其他IP访问，展示如下:
+其他IP访问：
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
 
-对于新闻通知接口，无此要求则无需配置该插件。
+newinfo端口无需配置此插件。
 
 ## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
 
-对于用户信息接口，我们希望控制其访问频率，不是无限制的访问。
+user端口通过Rate Limiting插件控制用户访问频率，避免无限制访问。
 
-Kong提供的TRAFFIC CONTROL类插件中有rate limiting，可以满足该要求。
-
-首先给用户信息接口添加rate limiting插件扩展，这里我们设置为1min中只能访问1次。
+* 为user端口添加Rate Limiting插件扩展，设置为1分钟内只能访问1次
 
 <div align=center><img width="600" height="" src="./image/plugin-person-ratelimiting.png"/></div>
 
-对于正常访问，展示如下:
+正常访问展示:
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
-对于超出次数的访问，展示如下:
+超出次数的访问展示:
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
 
-对于新闻通知接口，无此要求则无需配置该插件。
+newinfo端口无需配置此插件。
 
 ## <a name="LOGGING"></a>LOGGING实现
 
-对于用户信息接口，我们希望获取每次访问的日志。
-Kong提供的LOGGING类插件中有几种都可以满足该要求，日志输出到tcp server、udp server、日志文件、系统日志等。
-这里我们使用file-log插件。
+user端口通过File-log插件实现对于每次访问日志的获取，需要注意为日志文件写权限，日志格式参考[Log Format](https://getkong.org/plugins/file-log/#log-format)。
 
-首先给用户信息接口添加file-log插件，这里我们设置为日志文件路径设为:/tmp/file.log.
+* 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
 
 <div align=center><img width="600" height="" src="./image/plugin-person-filelog.png"/></div>
 
-备注: 日志文件一定要有写权限
-
-添加日志插件后，每次访问，都会记录访问记录:
+* 添加日志插件后，每次访问都会被记录
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-filelog.png"/></div>
 
-日志格式可以参考[Log Format](https://getkong.org/plugins/file-log/#log-format)
-
-对于新闻通知接口，无此要求则无需配置该插件。
+newinfo端口无需配置此插件。
 
 # <a name="KONG插件开发"></a>KONG插件开发
 
@@ -333,107 +287,8 @@ Kong提供的LOGGING类插件中有几种都可以满足该要求，日志输出
      
 7. 制作kong镜像，并[快速部署](#快速部署)
 
-## <a name="#log2zmq"></a>开发示例1:log2zmq
-
-   log2zmq插件用于获取请求的日志并将日志数据发送到zeromq。
-
-1. 确认插件助恶时所需参数信息
-
-   * zeromq服务器IP地址
-   
-   * zeromq服务器端口
-   
-   * zeromq的topic
-
-2. 在custom_plugins中创建log2zmq目录，添加schmea.lua，并添加对应的逻辑用于处理API注册
-
-<div align=center><img width="600" height="" src="./image/pluginshow.png"/></div>
-
-<div align=center><img width="600" height="" src="./image/log2zmq.png"/></div>
-
-3. 处理请求处理过程中插件的逻辑，通过handler.lua脚本完成。
-
-   handler.lua需要扩展Kong的BasePlugin，这个是Kong插件的基础类，所有的插件都需要继承BasePlugin。在BasePlugin中定义了请求处理的几个过程，自定义插件可以通过复写这些方法完成对应的逻辑。
-
-   <div align=center><img width="600" height="" src="./image/baseplugin.png"/></div>
-
-   这个插件需要收集日志，因此复写log方法完成日志收集、发送。
-
-   <div align=center><img width="600" height="" src="./image/log2zmqhandler.png"/></div>
-
-4. 修改kong_default.lua的custom_plugins数据
-
-   ```
-   custom_plugins = log2zmq
-   ```
-
-5. 本地测试插件功能
-
-   ```
-   luarocks make
-   ```
-
-6. 制作KONG的镜像，将自定义的插件打包到镜像中，并[快速部署](#快速部署)自定义KONG
-
-## <a name="#accesslimiting"></a>开发示例2:accesslimiting
-
-accesslimiting插件用于定义过去`period`分钟内，每个ip限制访问`limit`次
-
-1. 确认插件注册时需要的参数信息:
-
-   * 时间间隔`period`
-   
-   * ip访问次数限制`limit`
-
-2. 在custom_plugins中创建accesslimiting目录，添加schmea.lua，添加对应的逻辑用于处理API注册
-
-<div align=center><img width="600" height="" src="./image/accesslimit.png"/></div>
-
-3. 处理请求处理过程中插件的逻辑，需要handler.lua脚本完成
-
-   accesslimiting插件需要存储访问数据，因此这里演示使用数据库进行存储（推荐redis等nosql）。存储数据除了handler.lua外，还需要定义插件的数据结构、数据库访问方法，而Kong支持2种数据结构: cassandra\postgres，这里使用postgres。
-
-   3.1 定义表结构，在插件目录下创建migrations/postgres.lua，完成插件的初始化和清理逻辑，如下所示:
-   
-   ```
-   mkdir -p ${KONG_DIR}/custom_plugins/xxx/migrations
-   touch postgres.lua
-   return {
-        {
-            name = "xxxxxxxxx",
-            up = [[
-                CREATE TABLE IF NOT EXISTS ${TABLENAME}(
-                    xx
-                );
-            ]],
-            down = [[
-                DROP TABLE ${TABLENAME};
-            ]]
-        }
-    }
-   ```
-
-   3.2 完成数据的访问，并在插件目录下创建dao/postgres.lua
-
-   <div align=center><img width="600" height="" src="./image/accesslimitdao.png"/></div>
-   
-   3.3 本插件在请求访问前确认是访问，因此复写access方法完成访问校验
-
-   <div align=center><img width="600" height="" src="./image/accesslimithandler.png"/></div>
-
-4. 之后修改kong_default.lua的custom_plugins数据:
-
-   ```
-   custom_plugins = log2zmq, accesslimit
-   ```
-
-5. 本地测试插件功能
-
-   ```
-   luarocks make
-   ```
-
-6. 制作KONG的镜像，将自定义的插件打包到镜像中，并[快速部署](#快速部署)自定义KONG
+[KONG插件开发示例：log2zmq](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/KONG%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%A4%BA%E4%BE%8B%EF%BC%9Alog2zmq.md)
+[KONG插件开发示例：accesslimiting](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/KONG%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%A4%BA%E4%BE%8B%EF%BC%9Aaccesslimiting.md)
 
 # <a name="#生产环境"></a>生产环境
 
