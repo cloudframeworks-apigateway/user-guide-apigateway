@@ -108,7 +108,7 @@
 
 本例使用KONG本身实现ROUTING，并添加了[OAuth 2.0](https://getkong.org/plugins/oauth2-authentication/)（AUTHENTICATION实现）、[IP Restriction](https://getkong.org/plugins/ip-restriction/)（SECURITY实现）、[Rate Limiting](https://getkong.org/plugins/rate-limiting/)（TRAFFIC CONTROL实现）、[File](https://getkong.org/plugins/file-log/)（LOGGING实现)等4个插件。（[查看更多官方插件](https://getkong.org/plugins/)）
 
-以下管理配置通过命令行实现，或可查看通过KONG的UI管理界面方法[KONG DASHBOARD](./READMORE/kongdashboard方法.md)。
+以下管理配置通过命令行实现。KONG也可以通过UI管理界面进行管理和配置，方法请参考[KONG DASHBOARD](./READMORE/kongdashboard方法.md)。
 
 <a name="组件架构"></a>组件架构如下图所示：
 
@@ -134,15 +134,19 @@
 
 ### <a name="注册API"></a>注册API
 
-使用Kong代理API，首先需要把API注册到Kong，并在在API列表页查看，如下将9001的nginx注册到Kong：
+使用Kong代理API，首先需要把API注册到Kong，并通过返回数据查看注册是否成功：
 
-<div align=center><img width="600" height="" src="./image/apiadd.png"/></div>
-
-<div align=center><img width="600" height="" src="./image/apilist.png"/></div>
+```
+curl -i -X POST \
+      --url http://127.0.0.1:8001/apis/ \
+      --data 'name=nginxfirst' \
+      --data 'hosts=nginxfirst' \
+      --data 'upstream_url=http://xx.xx.xx.xx:9001/'
+```
 
 ### <a name="添加用户"></a>添加用户
 
-API可能没有用户概念，可以随意调用。Kong为这种情况提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API。
+API可能没有用户概念，会出现随意调用的情况。为此Kong提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API。
 
 首先创建一个consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
 
@@ -160,9 +164,27 @@ API可能没有用户概念，可以随意调用。Kong为这种情况提供了�
 
 这是一种非常科学的设计，因为在实际情况中很可能会出现有的API完全开放，不需要任何认证，有的API会涉及敏感数据，权限控制需要非常严格；有的API完全不在乎调用频次或者日志，有的API则严格限制调用频次或者日志等类似情况。
 
-如为前面注册的9001nginx添加访问控制，所有通过验证的请求可以访问，而验证失败请求则不能：
+我们可以通过如下命令添加插件：
 
-<div align=center><img width="600" height="" src="./image/pluginadd.png"/></div>
+```
+curl -i -X POST \
+  --url http://127.0.0.1:8001/apis/nginxfirst/plugins/ \
+  --data 'name=key-auth'
+```
+
+并通过命令行进行访问验证：
+
+```
+curl -H 'Host: nginxfirst' -H 'TT: e9da671f5c5d44d5bfdca95585283979' http://127.0.0.1:8000
+```
+
+<div align=center><img width="600" height="" src="./image/keyauthsucc.png"/></div>
+
+```
+curl -H 'Host: nginxfirst' http://127.0.0.1:8000
+```
+
+<div align=center><img width="600" height="" src="./image/keyauthfailed.png"/></div>
 
 ## <a name="ROUTING"></a>ROUTING实现
 
@@ -170,13 +192,15 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 * 注册user api
 
-<div align=center><img width="600" height="" src="./image/new-personadd.png"/></div>
+（添加命令行）
 
 * 注册newinfo api
 
-<div align=center><img width="600" height="" src="./image/new-newinfoadd.png"/></div>
+（添加命令行）
 
 注册成功后即可通过Kong代理访问用户信息（user端口）、新闻信息（newinfo端口）
+
+（json代码替换截图）
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
@@ -190,11 +214,11 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 * 注册Oauth2插件，参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
-<div align=center><img width="600" height="" src="./image/plugin-person-oauth2.png"/></div>
+（添加命令行）
 
 * 添加Consumer及Consumer对应的credentials
 
-<div align=center><img width="600" height="" src="./image/plugin-person-oauth2user.png"/></div>
+（添加命令行）
 
 newinfo端口由于数据不敏感，无需特殊配置。
 
@@ -204,13 +228,17 @@ newinfo端口由于数据不敏感，无需特殊配置。
 
 * 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）。
 
-<div align=center><img width="600" height="" src="./image/plugin-person-ip.png"/></div>
+（添加命令行）
 
 白名单内IP访问：
+
+（JSON代码替换截图）
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 其他IP访问：
+
+（JSON代码替换截图）
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
 
@@ -222,13 +250,17 @@ user端口通过Rate Limiting插件控制用户访问频率，避免无限制访
 
 * 为user端口添加Rate Limiting插件扩展，设置为1分钟内只能访问1次
 
-<div align=center><img width="600" height="" src="./image/plugin-person-ratelimiting.png"/></div>
+（添加命令行）
 
 正常访问展示:
+
+（JSON代码替换截图）
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 超出次数的访问展示:
+
+（JSON代码替换截图）
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
 
@@ -240,7 +272,7 @@ user端口通过File-log插件实现对于每次访问日志的获取，需要�
 
 * 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
 
-<div align=center><img width="600" height="" src="./image/plugin-person-filelog.png"/></div>
+（添加命令行）
 
 * 添加日志插件后，每次访问都会被记录
 
