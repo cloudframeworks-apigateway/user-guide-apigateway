@@ -253,8 +253,6 @@ newinfo端口无需配置此插件。
 
 # <a name="KONG插件开发"></a>KONG插件开发
 
-## <a name="KONG开发流程"></a>KONG开发流程
-
 1. git clone Kong到本地
     
    ```
@@ -288,6 +286,7 @@ newinfo端口无需配置此插件。
 7. 制作kong镜像，并[快速部署](#快速部署)
 
 [KONG插件开发示例：log2zmq](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/KONG%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%A4%BA%E4%BE%8B%EF%BC%9Alog2zmq.md)
+
 [KONG插件开发示例：accesslimiting](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/KONG%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E7%A4%BA%E4%BE%8B%EF%BC%9Aaccesslimiting.md)
 
 # <a name="#生产环境"></a>生产环境
