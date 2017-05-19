@@ -48,7 +48,7 @@
 
 ## ROUTING实现
 
-* 注册user端口 api
+**注册user端口api**
 
 Name：persons
 
@@ -58,7 +58,7 @@ Upstream url：https://172.16.0.127:8080/api/persons
 
 图adduserapi
 
-* 注册newinfo端口 api
+**注册newinfo端口api**
 
 Name：newinfoapi
 
@@ -68,13 +68,11 @@ Upstream url：upstream_url=https://172.16.0.127:8080/api/newinfos
 
 图addnewinfoapi
 
-注册成功后即可通过Kong代理访问用户信息（user端口）、新闻信息（newinfo端口）
+**通过Kong代理访问**
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
+user端口：https://127.0.0.1:8080/api/persons
 
-<div align=center><img width="600" height="" src="./image/kong-proxynewinfo.png"/></div>
-
-此时，可以将用户信息、新闻通知对外访问控制限制为只有Kong可以访问，外部请求全部通过Kong进行代理。
+newinfo端口：https://127.0.0.1:8080/api/newinfos
 
 ## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
