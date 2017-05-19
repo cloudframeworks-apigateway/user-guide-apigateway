@@ -224,10 +224,16 @@ curl -i -X POST \
 3. 注册成功后即可通过Kong代理访问
 
    * 用户信息（user端口）
+   
+   命令：
 
    ```
    curl -H 'Host: personapi' http://127.0.0.1:8000
-
+   ```
+   
+   返回：
+   
+   ```JSON
    [
        {"pid":1,"name":"lucien","age":30},
        {"pid":2,"name":"Joe","age":28},
@@ -240,18 +246,21 @@ curl -i -X POST \
    ```
 
    * 新闻信息（newinfo端口）
+   
+   命令：
 
    ```
    curl -H 'Host: newinfoapi' http://127.0.0.1:8000
-
+   ```
+   
+   返回：
+   
+   ```JSON
    [
        {"nid":1,"title":"一路一代代","content":"what happending...."},
        {"nid":2,"title":"雪中悍刀行","content":"人生三不朽,立功立德立言"}
    ]
    ```
-<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
-
-<div align=center><img width="600" height="" src="./image/kong-proxynewinfo.png"/></div>
 
 此时，可以将用户信息、新闻通知对外访问控制限制为只有Kong可以访问，外部请求全部通过Kong进行代理。
 
@@ -308,12 +317,18 @@ curl -k -H 'Host: personapi' \
 4. 访问
 
    * 使用token访问user api
+   
+   命令：
 
    ```
    curl -H 'Host: personapi' \
         -H 'Authorization: bearer bad2a7ee579e4389880ae29b3610c639' \
         http://127.0.0.1:8000
-
+   ```
+   
+   返回：
+   
+   ```JSON
    [
        {"pid":1,"name":"lucien","age":30},
        {"pid":2,"name":"Joe","age":28},
@@ -327,9 +342,15 @@ curl -k -H 'Host: personapi' \
 
    * 不使用token访问user api
    
+   命令： 
+   
    ```
    curl -H 'Host: personapi' http://127.0.0.1:8000
-
+   ```
+   
+   返回：
+   
+   ```
    {
        "error_description":"The access token is missing",
        "error":"invalid_request"
