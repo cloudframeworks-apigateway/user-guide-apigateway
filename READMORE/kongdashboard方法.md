@@ -12,13 +12,13 @@
 
 需要我们填写Kong node URL，注意此处应填写 http://172.17.0.1:8001 （docker0 interface ip）或 http://192.168.x.x:8001 (LAN ip) ，否则将显示`can't connect to Kong server`。AUTHENTICATION及Gelato links for consumer选项一般情况下无需配置。
 
-成功后即可进入欢迎页面
+成功后即可进入欢迎页面：
 
 <div align=center><img width="900" height="" src="./image/kongwelcome.png"/></div>
 
 ### 注册API
 
-点击欢迎页面右上角`API`，并在页面中点击`ADD API`，进入API注册页面
+点击欢迎页面右上角`API`，并在页面中点击`ADD API`，进入API注册页面：
 
 <div align=center><img width="900" height="" src="./image/kongaddapi.png"/></div>
 
