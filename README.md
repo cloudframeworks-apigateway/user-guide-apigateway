@@ -175,7 +175,7 @@ curl -X POST \
 
 这是一种非常科学的设计，因为在实际情况中很可能会出现有的API完全开放，不需要任何认证，有的API会涉及敏感数据，权限控制需要非常严格；有的API完全不在乎调用频次或者日志，有的API则严格限制调用频次或者日志等类似情况。
 
-我们可以通过如下命令添加插件：
+1. 添加插件：
 
 ```
 curl -i -X POST \
@@ -183,7 +183,7 @@ curl -i -X POST \
   --data 'name=key-auth'
 ```
 
-并通过命令行进行访问验证：
+2. 访问验证：
 
 ```
 curl -H 'Host: personapi' -H 'TT: 78182b121a074fe6961555d802e40b3b' http://127.0.0.1:8000
@@ -201,7 +201,7 @@ curl -H 'Host: personapi' http://127.0.0.1:8000/
 
 user端口和newinfo端口之间实现路由，需先将服务注册到Kong，外部访问将统一走api gateway代理。
 
-* 注册user api
+1. 注册user api
 
 ```
 curl -i -X POST \
@@ -211,7 +211,7 @@ curl -i -X POST \
       --data 'upstream_url=https://172.16.0.133:8080/api/persons'
 ```
 
-* 注册newinfo api
+2. 注册newinfo api
 
 ```
 curl -i -X POST \
@@ -221,7 +221,9 @@ curl -i -X POST \
       --data 'upstream_url=https://172.16.0.133:8080/api/newinfos'
 ```
 
-注册成功后即可通过Kong代理访问用户信息（user端口）、新闻信息（newinfo端口）
+3. 注册成功后即可通过Kong代理访问
+
+**用户信息**（user端口）
 
 ```
 curl -H 'Host: personapi' http://127.0.0.1:8000
@@ -236,6 +238,8 @@ curl -H 'Host: personapi' http://127.0.0.1:8000
     {"pid":7,"name":"tdt","age":20}
 ]
 ```
+
+**新闻信息**（newinfo端口）
 
 ```
 curl -H 'Host: newinfoapi' http://127.0.0.1:8000
