@@ -1,32 +1,54 @@
 # KONG DASHBOARD方法
 
+首次访问 http://locaslhost:5000 ，将出现Kong node configuration页面。
+
+图kongforfirsttime
+
+需要我们填写Kong node URL，注意此处应填写 http://172.17.0.1:8001 （docker0 interface ip）或 http://192.168.x.x:8001 (LAN ip) ，否则将显示`can't connect to Kong server`。AUTHENTICATION及Gelato links for consumer选项一般情况下无需配置。
+
+成功后即可进入欢迎页面
+
+图kongwelcome
+
 ### 注册API
 
-使用Kong代理API，首先需要把API注册到Kong，并在在API列表页查看，如下将9001的nginx注册到Kong：
+点击欢迎页面右上角`API`，并在页面中点击`ADD API`，进入API注册页面
 
-<div align=center><img width="600" height="" src="./image/apiadd.png"/></div>
+图kongaddapi
 
-<div align=center><img width="600" height="" src="./image/apilist.png"/></div>
+例如我们想要将user端口注册到kong，只需填写`Name`、`Hosts`、`Upstream uri`三项并点击`CREATE`即可，其他选项无需特意配置或使用默认即可。
+
+* Name：personapi
+
+* Hosts：personapi
+
+* Upstream uri：https://172.16.0.133:8080/api/persons
+
+添加后可在API页面查看：
+
+图kongapilist
 
 ### 添加用户
 
-API可能没有用户概念，可以随意调用。Kong为这种情况提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API。
+点击欢迎页面右上角`Consumers`，并在页面中点击`ADD CONSUMER`，进入用户添加页面填写`Username`及`Custom id`并点击`CREATE`即可完成添加
 
-首先创建一个consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
+图kongaddconsumer
 
-<div align=center><img width="600" height="" src="./image/keyauth.png"/></div>
+我们可以在consumer列表中管理用户，并为用户添加KEY AUTH（可以自己定义key或不填写使用kong自动生成的key）
 
-需要注意的是：
-
-* 若另一API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，想要控制这种情况，需借助Kong的[ACL插件](https://getkong.org/plugins/acl/)
-
-* 对于Kong来讲，认证与权限是两个不同的东西
+图kongconsumerkeyauth
 
 ### API添加插件
 
-如为前面注册的9001nginx添加访问控制，所有通过验证的请求可以访问，而验证失败请求则不能：
+点击欢迎页面右上角`Plugins`，并在页面中点击`ADD PLUGIN`进入API添加插件页面。
 
-<div align=center><img width="600" height="" src="./image/pluginadd.png"/></div>
+图kongaddplugin
+
+页面包含选择api及选择插件两个下拉菜单，例如为user端口添加key_auth插件实现访问控制，只需在下拉菜单中选择persons及key_auth，并可按照喜好定义key name、Anonymous及credentials是否隐藏。
+
+已添加插件可在Plugins列表中查看并随时修改。
+
+图kongpluginsmanage
 
 ## ROUTING实现
 
