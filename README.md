@@ -340,7 +340,7 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
         ]
         ```
 
-* 不使用token访问user api
+    * 不使用token访问user api
 
         命令： 
 
@@ -374,43 +374,43 @@ curl -X POST \
 
 2. 访问效果：
 
-* 白名单内IP访问：
+    * 白名单内IP访问：
 
-命令：
+        命令：
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
-```
+        ```
+        curl -H 'Host: personapi' http://127.0.0.1:8000
+        ```
 
-返回：
+        返回：
 
-```JSON
-[
-    {"pid":1,"name":"lucien","age":30},
-    {"pid":2,"name":"Joe","age":28},
-    {"pid":3,"name":"smith","age":32},
-    {"pid":4,"name":"Tod","age":56},
-    {"pid":5,"name":"linken","age":34},
-    {"pid":6,"name":"truple","age":23},
-    {"pid":7,"name":"tdt","age":20}
-]
-```
+        ```JSON
+        [
+            {"pid":1,"name":"lucien","age":30},
+            {"pid":2,"name":"Joe","age":28},
+            {"pid":3,"name":"smith","age":32},
+            {"pid":4,"name":"Tod","age":56},
+            {"pid":5,"name":"linken","age":34},
+            {"pid":6,"name":"truple","age":23},
+            {"pid":7,"name":"tdt","age":20}
+        ]
+        ```
 
-* 其他IP访问：
+    * 其他IP访问：
 
-命令：
+        命令：
 
-```
-curl -H 'Host: personapi' http://172.17.0.1:8000
-```
+        ```
+        curl -H 'Host: personapi' http://172.17.0.1:8000
+        ```
 
-返回：
+        返回：
 
-```JSON
-{
-    "message":"Your IP address is not allowed"
-}
-```
+        ```JSON
+        {
+            "message":"Your IP address is not allowed"
+        }
+        ```
 
 newinfo端口无需配置此插件。
 
@@ -427,43 +427,43 @@ curl -X POST \
      http://127.0.0.1:8001/apis/personapi/plugins 
 ```
 
-* 正常访问展示:
+    * 正常访问展示:
 
-命令：
+        命令：
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
-```
+        ```
+        curl -H 'Host: personapi' http://127.0.0.1:8000
+        ```
 
-返回：
+        返回：
 
-```JSON
-[
-    {"pid":1,"name":"lucien","age":30},
-    {"pid":2,"name":"Joe","age":28},
-    {"pid":3,"name":"smith","age":32},
-    {"pid":4,"name":"Tod","age":56},
-    {"pid":5,"name":"linken","age":34},
-    {"pid":6,"name":"truple","age":23},
-    {"pid":7,"name":"tdt","age":20}
-]
-```
+        ```JSON
+        [
+            {"pid":1,"name":"lucien","age":30},
+            {"pid":2,"name":"Joe","age":28},
+            {"pid":3,"name":"smith","age":32},
+            {"pid":4,"name":"Tod","age":56},
+            {"pid":5,"name":"linken","age":34},
+            {"pid":6,"name":"truple","age":23},
+            {"pid":7,"name":"tdt","age":20}
+        ]
+        ```
 
-* 超出次数的访问展示:
+    * 超出次数的访问展示:
 
-命令：
+        命令：
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
-```
+        ```
+        curl -H 'Host: personapi' http://127.0.0.1:8000
+        ```
 
-返回：
+        返回：
 
-```JSON
-{
-    "message":"API rate limit exceeded"
-}
-```
+        ```JSON
+        {
+            "message":"API rate limit exceeded"
+        }
+        ```
 
 newinfo端口无需配置此插件。
 
@@ -490,27 +490,27 @@ newinfo端口无需配置此插件。
 
 1. git clone Kong到本地
 
-```
-git clone git@github.com:Mashape/kong.git
-```
+    ```
+    git clone git@github.com:Mashape/kong.git
+    ```
 
 2. 创建自定义插件目录
 
-```
-cd ${KONG_DIR}
-cd kong
-mkdir custom_plugins
-```
+    ```
+    cd ${KONG_DIR}
+    cd kong
+    mkdir custom_plugins
+    ```
 
 3. 新增插件
 
-```
-cd ${KONG_DIR}
-cd kong
-mkdir custom_plugins
-cd custom_plugins
-mkdir xxx
-```
+    ```
+    cd ${KONG_DIR}
+    cd kong
+    mkdir custom_plugins
+    cd custom_plugins
+    mkdir xxx
+    ```
 
 4. 编辑插件的schema.lua、handler.lua, 根据实际情况完成插件逻辑（[lua教程](http://www.runoob.com/lua/lua-tutorial.html)）
 
