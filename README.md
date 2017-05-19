@@ -427,6 +427,8 @@ curl -X POST \
      http://127.0.0.1:8001/apis/personapi/plugins 
 ```
 
+2. 访问效果：
+
     * 正常访问展示:
 
         命令：
