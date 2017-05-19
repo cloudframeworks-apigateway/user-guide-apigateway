@@ -43,51 +43,51 @@
 
 3. 启动kong
    
-  ```
-  docker pull kong
-  docker pull postgres
-  docker run -d --name kong-database \
-                -p 5432:5432 \
-                -e "POSTGRES_USER=kong" \
-                -e "POSTGRES_DB=kong" \
-                postgres
-  docker run -d --name kong \
-                --link kong-database:kong-database \
-                -e "KONG_DATABASE=postgres" \
-                -e "KONG_PG_HOST=kong-database" \
-                -p 8000:8000 \
-                -p 8443:8443 \
-                -p 8001:8001 \
-                -p 7946:7946 \
-                -p 7946:7946/udp \
-                kong
-  ```
+    ```
+    docker pull kong
+    docker pull postgres
+    docker run -d --name kong-database \
+                  -p 5432:5432 \
+                  -e "POSTGRES_USER=kong" \
+                  -e "POSTGRES_DB=kong" \
+                  postgres
+    docker run -d --name kong \
+                  --link kong-database:kong-database \
+                  -e "KONG_DATABASE=postgres" \
+                  -e "KONG_PG_HOST=kong-database" \
+                  -p 8000:8000 \
+                  -p 8443:8443 \
+                  -p 8001:8001 \
+                  -p 7946:7946 \
+                  -p 7946:7946/udp \
+                  kong
+    ```
 4. 启动kong-dashboard（可选）
 
-  ```
-  docker pull goodraincloudframeworks/docker-kong-dashboard
-  docker run -d -p 5000:5000 goodraincloudframeworks/docker-kong-dashboard
-  ```
+    ```
+    docker pull goodraincloudframeworks/docker-kong-dashboard
+    docker run -d -p 5000:5000 goodraincloudframeworks/docker-kong-dashboard
+    ```
 
 5. 基于[docker-compose](https://docs.docker.com/compose/install/)运行如下命令
 
-  ```
-  docker-compose -f docker-compose.yml up -d
-  ```
+    ```
+    docker-compose -f docker-compose.yml up -d
+    ```
 
 6. 访问路径
 
-  http://127.0.0.1:8000 - kong url
+    http://127.0.0.1:8000 - kong url
    
-  http://127.0.0.1:8001 - kong admin url
+    http://127.0.0.1:8001 - kong admin url
    
-  https://127.0.0.1:8443 - kong https url
+    https://127.0.0.1:8443 - kong https url
    
-  http://127.0.0.1:5000 - kong dashboard ui
+    http://127.0.0.1:5000 - kong dashboard ui
     
-  https://172.16.0.133:8080/api/persons - user api url
+    https://172.16.0.133:8080/api/persons - user api url
    
-  https://172.16.0.133:8080/api/newinfos - newinfo api url
+    https://172.16.0.133:8080/api/newinfos - newinfo api url
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
@@ -149,19 +149,19 @@ API可能没有用户概念，会出现随意调用的情况。为此Kong提供�
 
 1. 创建一个consumer
 
-```
-curl -X POST \
-    --data "username=oauthadmin" \
-    --data "custom_id=personapi"
-    http://127.0.0.1:8001/consumers/ \
-```
+    ```
+    curl -X POST \
+        --data "username=oauthadmin" \
+        --data "custom_id=personapi"
+       http://127.0.0.1:8001/consumers/ \
+    ```
 
 2. 在key-auth插件中为此consumer生成key
 
-```
-curl -X POST \
-    http://127.0.0.1:8001/consumers/personapi/key-auth \
-```
+    ```
+    curl -X POST \
+       http://127.0.0.1:8001/consumers/personapi/key-auth \
+    ```
 
 此时即可使用key来通过权限验证访问API了，需要注意的是：
 
@@ -177,23 +177,23 @@ curl -X POST \
 
 1. 添加插件：
 
-```
-curl -i -X POST \
-  --url http://127.0.0.1:8001/apis/personapi/plugins/ \
-  --data 'name=key-auth'
-```
+    ```
+    curl -i -X POST \
+      --url http://127.0.0.1:8001/apis/personapi/plugins/ \
+      --data 'name=key-auth'
+    ```
 
 2. 访问验证：
 
-```
-curl -H 'Host: personapi' -H 'TT: 78182b121a074fe6961555d802e40b3b' http://127.0.0.1:8000
-```
+    ```
+    curl -H 'Host: personapi' -H 'TT: 78182b121a074fe6961555d802e40b3b' http://127.0.0.1:8000
+    ```
 
 <div align=center><img width="600" height="" src="./image/keyauthsucc.png"/></div>
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000/
-```
+    ```
+    curl -H 'Host: personapi' http://127.0.0.1:8000/
+    ```
 
 <div align=center><img width="600" height="" src="./image/keyauthfailed.png"/></div>
 
@@ -203,23 +203,23 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 1. 注册user api
 
-```
-curl -i -X POST \
-      --url http://127.0.0.1:8001/apis/ \
-      --data 'name=personapi' \
-      --data 'hosts=personapi' \
-      --data 'upstream_url=https://172.16.0.133:8080/api/persons'
-```
+    ```
+    curl -i -X POST \
+          --url http://127.0.0.1:8001/apis/ \
+          --data 'name=personapi' \
+          --data 'hosts=personapi' \
+          --data 'upstream_url=https://172.16.0.133:8080/api/persons'
+    ```
 
 2. 注册newinfo api
 
-```
-curl -i -X POST \
-      --url http://127.0.0.1:8001/apis/ \
-      --data 'name=newinfoapi' \
-      --data 'hosts=newinfoapi' \
-      --data 'upstream_url=https://172.16.0.133:8080/api/newinfos'
-```
+    ```
+    curl -i -X POST \
+          --url http://127.0.0.1:8001/apis/ \
+         --data 'name=newinfoapi' \
+         --data 'hosts=newinfoapi' \
+         --data 'upstream_url=https://172.16.0.133:8080/api/newinfos'
+    ```
 
 3. 注册成功后即可通过Kong代理访问
 
