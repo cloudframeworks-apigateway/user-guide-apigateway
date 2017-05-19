@@ -62,7 +62,7 @@
                  -p 7946:7946/udp \
                  kong
    ```
-4. 启动kong-dashboard
+4. 启动kong-dashboard（可选）
 
    ```
    docker pull goodraincloudframeworks/docker-kong-dashboard
