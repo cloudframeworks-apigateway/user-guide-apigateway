@@ -129,7 +129,7 @@
 
 * user端口可获取每次访问日志（LOGGING实现）
 
-## <a name="KONG基本使用"></a>KONG基本使用 （需匹配实例）
+## <a name="KONG基本使用"></a>KONG基本使用
 
 ### <a name="注册API"></a>注册API
 
@@ -372,6 +372,8 @@ curl -X POST \
      http://127.0.0.1:8001/apis/personapi/plugins 
 ```
 
+2. 访问效果：
+
    * 白名单内IP访问：
    
    命令：
@@ -379,11 +381,11 @@ curl -X POST \
    ```
    curl -H 'Host: personapi' http://127.0.0.1:8000
    ```
-   
+
    返回：
-   
+
    ```JSON
-   [
+   [
        {"pid":1,"name":"lucien","age":30},
        {"pid":2,"name":"Joe","age":28},
        {"pid":3,"name":"smith","age":32},
@@ -403,7 +405,7 @@ curl -X POST \
    ```
    
    返回：
-   
+
    ```JSON
    {
        "message":"Your IP address is not allowed"
