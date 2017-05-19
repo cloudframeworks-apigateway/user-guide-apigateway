@@ -68,7 +68,7 @@ Hosts：newinfoapi
 
 Upstream url：https://172.16.0.127:8080/api/newinfos
 
-<div align=center><img width="900" height="" src="./image/addnewinfoapi.png"/></div>
+<div align=center><img width="900" height="" src="./image/addnewinfosapi.png"/></div>
 
 **通过Kong代理访问**
 
