@@ -22,13 +22,7 @@
 
 例如我们想要将user端口注册到kong，只需填写`Name`、`Hosts`、`Upstream uri`三项并点击`CREATE`即可，其他选项无需特意配置或使用默认即可。
 
-* Name：personapi
-
-* Hosts：personapi
-
-* Upstream uri：https://172.16.0.133:8080/api/persons
-
-添加后可在API页面查看：
+添加后可在API页面查看已注册API：
 
 图kongapilist
 
@@ -44,11 +38,9 @@
 
 ### API添加插件
 
-点击欢迎页面右上角`Plugins`，并在页面中点击`ADD PLUGIN`进入API添加插件页面。
+点击欢迎页面右上角`Plugins`，并在页面中点击`ADD PLUGIN`进入API添加插件页面，只需在下拉菜单中选择api及插件，并按照喜好定义key name、Anonymous及credentials是否隐藏即可。
 
 图kongaddplugin
-
-页面包含选择api及选择插件两个下拉菜单，例如为user端口添加key_auth插件实现访问控制，只需在下拉菜单中选择persons及key_auth，并可按照喜好定义key name、Anonymous及credentials是否隐藏。
 
 已添加插件可在Plugins列表中查看并随时修改。
 
@@ -56,13 +48,25 @@
 
 ## ROUTING实现
 
-* 注册user api
+* 注册user端口 api
 
-<div align=center><img width="600" height="" src="./image/new-personadd.png"/></div>
+Name：persons
 
-* 注册newinfo api
+Hosts：persons
 
-<div align=center><img width="600" height="" src="./image/new-newinfoadd.png"/></div>
+Upstream url：https://172.16.0.127:8080/api/persons
+
+图adduserapi
+
+* 注册newinfo端口 api
+
+Name：newinfoapi
+
+Hosts：newinfoapi
+
+Upstream url：upstream_url=https://172.16.0.127:8080/api/newinfos
+
+图addnewinfoapi
 
 注册成功后即可通过Kong代理访问用户信息（user端口）、新闻信息（newinfo端口）
 
