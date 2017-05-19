@@ -86,9 +86,9 @@
    
    http://127.0.0.1:5000 - kong dashboard ui
    
-   http://127.0.0.1:9001 - nginx demo1 url
+   https://127.0.0.1:8080/api/persons - user api url
    
-   http://127.0.0.1:9002 - nginx demo2 url
+   https://127.0.0.1:8080/api/newinfos - newinfo api url
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
@@ -139,9 +139,9 @@
 ```
 curl -i -X POST \
       --url http://127.0.0.1:8001/apis/ \
-      --data 'name=nginxfirst' \
-      --data 'hosts=nginxfirst' \
-      --data 'upstream_url=http://xx.xx.xx.xx:9001/'
+      --data 'name=personapi' \
+      --data 'hosts=personapi' \
+      --data 'upstream_url=https://172.16.0.133:8080/api/persons'
 ```
 
 ### <a name="添加用户"></a>添加用户
@@ -168,20 +168,20 @@ API可能没有用户概念，会出现随意调用的情况。为此Kong提供�
 
 ```
 curl -i -X POST \
-  --url http://127.0.0.1:8001/apis/nginxfirst/plugins/ \
+  --url http://127.0.0.1:8001/apis/personapi/plugins/ \
   --data 'name=key-auth'
 ```
 
 并通过命令行进行访问验证：
 
 ```
-curl -H 'Host: nginxfirst' -H 'TT: e9da671f5c5d44d5bfdca95585283979' http://127.0.0.1:8000
+curl -H 'Host: personapi' -H 'TT: 78182b121a074fe6961555d802e40b3b' http://127.0.0.1:8000
 ```
 
 <div align=center><img width="600" height="" src="./image/keyauthsucc.png"/></div>
 
 ```
-curl -H 'Host: nginxfirst' http://127.0.0.1:8000
+curl -H 'Host: personapi' http://127.0.0.1:8000/
 ```
 
 <div align=center><img width="600" height="" src="./image/keyauthfailed.png"/></div>
@@ -192,16 +192,48 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 * 注册user api
 
-（添加命令行）
+```
+curl -i -X POST \
+      --url http://127.0.0.1:8001/apis/ \
+      --data 'name=personapi' \
+      --data 'hosts=personapi' \
+      --data 'upstream_url=https://172.16.0.133:8080/api/persons'
+```
 
 * 注册newinfo api
 
-（添加命令行）
+```
+curl -i -X POST \
+      --url http://127.0.0.1:8001/apis/ \
+      --data 'name=newinfoapi' \
+      --data 'hosts=newinfoapi' \
+      --data 'upstream_url=https://172.16.0.133:8080/api/newinfos'
+```
 
 注册成功后即可通过Kong代理访问用户信息（user端口）、新闻信息（newinfo端口）
 
-（json代码替换截图）
+```
+curl -H 'Host: personapi' http://127.0.0.1:8000
 
+[
+    {"pid":1,"name":"lucien","age":30},
+    {"pid":2,"name":"Joe","age":28},
+    {"pid":3,"name":"smith","age":32},
+    {"pid":4,"name":"Tod","age":56},
+    {"pid":5,"name":"linken","age":34},
+    {"pid":6,"name":"truple","age":23},
+    {"pid":7,"name":"tdt","age":20}
+]
+```
+
+```
+curl -H 'Host: newinfoapi' http://127.0.0.1:8000
+
+[
+    {"nid":1,"title":"一路一代代","content":"what happending...."},
+    {"nid":2,"title":"雪中悍刀行","content":"人生三不朽,立功立德立言"}
+]
+```
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 <div align=center><img width="600" height="" src="./image/kong-proxynewinfo.png"/></div>
@@ -214,11 +246,76 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 * 注册Oauth2插件，参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
-（添加命令行）
+```
+curl -X POST \
+     --data 'name=oauth2' \
+     --data 'enable_password_grant=true' \
+     --data 'provision_key=qwe1238amsdh23' \
+     --data 'config.scopes=read,write' \
+     http://127.0.0.1:8001/apis/personapi/plugins 
+```
 
 * 添加Consumer及Consumer对应的credentials
 
-（添加命令行）
+```
+curl -X POST \
+    --data "username=oauthadmin" \
+    --data "custom_id=personapi"
+    http://127.0.0.1:8001/consumers/ \
+```
+```
+curl -X POST \
+    --data "name=oauthadmin" \
+    --data "redirect_uri=https://172.16.0.133:8080/api/persons"
+    http://kong:8001/consumers/personapi/oauth2 \
+```
+
+* 申请accesstoken并访问
+```
+curl -k -H 'Host: personapi' \
+    --data "client_id=5bee1b6679e5463599d7ce64b14c2795" \
+    --data "client_secret=54f2a058f30f46e8b5ccc8d6788eb081" \
+    --data "provision_key=qwe1238amsdh23" \
+    --data "authenticated_userid=b48bf407-c2b7-41a9-8e0f-43eead2fc60f" 
+    --data "grant_type=password" 
+    https://127.0.0.1:8443/oauth2/token
+
+{
+    "refresh_token":"e87d871957eb4717bb0002054ae8c9a3",
+    "token_type":"bearer",
+    "access_token":"bad2a7ee579e4389880ae29b3610c639",
+    "expires_in":7200
+}
+```
+
+使用token访问user api
+
+```
+curl -H 'Host: personapi' \
+     -H 'Authorization: bearer bad2a7ee579e4389880ae29b3610c639' \
+     http://127.0.0.1:8000
+
+[
+    {"pid":1,"name":"lucien","age":30},
+    {"pid":2,"name":"Joe","age":28},
+    {"pid":3,"name":"smith","age":32},
+    {"pid":4,"name":"Tod","age":56},
+    {"pid":5,"name":"linken","age":34},
+    {"pid":6,"name":"truple","age":23},
+    {"pid":7,"name":"tdt","age":20}
+]
+```
+
+不使用token访问user api
+```
+curl -H 'Host: personapi' http://127.0.0.1:8000
+
+{
+    "error_description":"The access token is missing",
+    "error":"invalid_request"
+}
+```
+
 
 newinfo端口由于数据不敏感，无需特殊配置。
 
@@ -228,17 +325,40 @@ newinfo端口由于数据不敏感，无需特殊配置。
 
 * 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）。
 
-（添加命令行）
+```
+curl -X POST \
+     --data 'name=ip-restriction' \
+     --data 'config.whitelist=172.17.0.1' \
+     http://127.0.0.1:8001/apis/personapi/plugins 
+```
 
 白名单内IP访问：
 
-（JSON代码替换截图）
+```
+curl -H 'Host: personapi' http://127.0.0.1:8000
+
+[
+    {"pid":1,"name":"lucien","age":30},
+    {"pid":2,"name":"Joe","age":28},
+    {"pid":3,"name":"smith","age":32},
+    {"pid":4,"name":"Tod","age":56},
+    {"pid":5,"name":"linken","age":34},
+    {"pid":6,"name":"truple","age":23},
+    {"pid":7,"name":"tdt","age":20}
+]
+```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 其他IP访问：
 
-（JSON代码替换截图）
+```
+curl -H 'Host: personapi' http://172.17.0.1:8000
+
+{
+    "message":"Your IP address is not allowed"
+}
+```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
 
@@ -250,17 +370,40 @@ user端口通过Rate Limiting插件控制用户访问频率，避免无限制访
 
 * 为user端口添加Rate Limiting插件扩展，设置为1分钟内只能访问1次
 
-（添加命令行）
+```
+curl -X POST \
+     --data 'name=rate-limiting' \
+     --data 'config.minute=1' \
+     http://127.0.0.1:8001/apis/personapi/plugins 
+```
 
 正常访问展示:
 
-（JSON代码替换截图）
+```
+curl -H 'Host: personapi' http://127.0.0.1:8000
+
+[
+    {"pid":1,"name":"lucien","age":30},
+    {"pid":2,"name":"Joe","age":28},
+    {"pid":3,"name":"smith","age":32},
+    {"pid":4,"name":"Tod","age":56},
+    {"pid":5,"name":"linken","age":34},
+    {"pid":6,"name":"truple","age":23},
+    {"pid":7,"name":"tdt","age":20}
+]
+```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 超出次数的访问展示:
 
-（JSON代码替换截图）
+```
+curl -H 'Host: personapi' http://127.0.0.1:8000
+
+{
+    "message":"API rate limit exceeded"
+}
+```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
 
@@ -272,7 +415,12 @@ user端口通过File-log插件实现对于每次访问日志的获取，需要�
 
 * 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
 
-（添加命令行）
+```
+curl -X POST \
+     --data 'name=file-log' \
+     --data 'config.path=/tmp/file.log' \
+     http://127.0.0.1:8001/apis/personapi/plugins 
+```
 
 * 添加日志插件后，每次访问都会被记录
 
