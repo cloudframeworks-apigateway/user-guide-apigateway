@@ -223,32 +223,32 @@ curl -i -X POST \
 
 3. 注册成功后即可通过Kong代理访问
 
-**用户信息**（user端口）
+   * 用户信息（user端口）
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
+   ```
+   curl -H 'Host: personapi' http://127.0.0.1:8000
 
-[
-    {"pid":1,"name":"lucien","age":30},
-    {"pid":2,"name":"Joe","age":28},
-    {"pid":3,"name":"smith","age":32},
-    {"pid":4,"name":"Tod","age":56},
-    {"pid":5,"name":"linken","age":34},
-    {"pid":6,"name":"truple","age":23},
-    {"pid":7,"name":"tdt","age":20}
-]
-```
+   [
+       {"pid":1,"name":"lucien","age":30},
+       {"pid":2,"name":"Joe","age":28},
+       {"pid":3,"name":"smith","age":32},
+       {"pid":4,"name":"Tod","age":56},
+       {"pid":5,"name":"linken","age":34},
+       {"pid":6,"name":"truple","age":23},
+       {"pid":7,"name":"tdt","age":20}
+   ]
+   ```
 
-**新闻信息**（newinfo端口）
+   * 新闻信息（newinfo端口）
 
-```
-curl -H 'Host: newinfoapi' http://127.0.0.1:8000
+   ```
+   curl -H 'Host: newinfoapi' http://127.0.0.1:8000
 
-[
-    {"nid":1,"title":"一路一代代","content":"what happending...."},
-    {"nid":2,"title":"雪中悍刀行","content":"人生三不朽,立功立德立言"}
-]
-```
+   [
+       {"nid":1,"title":"一路一代代","content":"what happending...."},
+       {"nid":2,"title":"雪中悍刀行","content":"人生三不朽,立功立德立言"}
+   ]
+   ```
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
 <div align=center><img width="600" height="" src="./image/kong-proxynewinfo.png"/></div>
@@ -259,7 +259,7 @@ curl -H 'Host: newinfoapi' http://127.0.0.1:8000
 
 通过OAuth 2.0 Authentication插件实现user端口的用户访问限制，
 
-* 注册Oauth2插件，参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
+1. 注册Oauth2插件，详情参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
 ```
 curl -X POST \
@@ -270,7 +270,7 @@ curl -X POST \
      http://127.0.0.1:8001/apis/personapi/plugins 
 ```
 
-* 添加Consumer及Consumer对应的credentials
+2. 添加Consumer及Consumer对应的credentials
 
 ```
 curl -X POST \
@@ -278,6 +278,7 @@ curl -X POST \
     --data "custom_id=personapi"
     http://127.0.0.1:8001/consumers/ \
 ```
+
 ```
 curl -X POST \
     --data "name=oauthadmin" \
@@ -285,7 +286,8 @@ curl -X POST \
     http://127.0.0.1:8001/consumers/personapi/oauth2
 ```
 
-* 申请accesstoken并访问
+3. 申请accesstoken并访问
+
 ```
 curl -k -H 'Host: personapi' \
     --data "client_id=5bee1b6679e5463599d7ce64b14c2795" \
@@ -303,34 +305,36 @@ curl -k -H 'Host: personapi' \
 }
 ```
 
-使用token访问user api
+4. 访问
 
-```
-curl -H 'Host: personapi' \
-     -H 'Authorization: bearer bad2a7ee579e4389880ae29b3610c639' \
-     http://127.0.0.1:8000
+   * 使用token访问user api
 
-[
-    {"pid":1,"name":"lucien","age":30},
-    {"pid":2,"name":"Joe","age":28},
-    {"pid":3,"name":"smith","age":32},
-    {"pid":4,"name":"Tod","age":56},
-    {"pid":5,"name":"linken","age":34},
-    {"pid":6,"name":"truple","age":23},
-    {"pid":7,"name":"tdt","age":20}
-]
-```
+   ```
+   curl -H 'Host: personapi' \
+        -H 'Authorization: bearer bad2a7ee579e4389880ae29b3610c639' \
+        http://127.0.0.1:8000
 
-不使用token访问user api
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
+   [
+       {"pid":1,"name":"lucien","age":30},
+       {"pid":2,"name":"Joe","age":28},
+       {"pid":3,"name":"smith","age":32},
+       {"pid":4,"name":"Tod","age":56},
+       {"pid":5,"name":"linken","age":34},
+       {"pid":6,"name":"truple","age":23},
+       {"pid":7,"name":"tdt","age":20}
+   ]
+   ```
 
-{
-    "error_description":"The access token is missing",
-    "error":"invalid_request"
-}
-```
+   * 不使用token访问user api
+   
+   ```
+   curl -H 'Host: personapi' http://127.0.0.1:8000
 
+   {
+       "error_description":"The access token is missing",
+       "error":"invalid_request"
+   }
+   ```
 
 newinfo端口由于数据不敏感，无需特殊配置。
 
@@ -338,7 +342,7 @@ newinfo端口由于数据不敏感，无需特殊配置。
 
 通过添加IP Restriction插件，实现对user端口的访问限制，即仅规定IP可访问。
 
-* 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）。
+1. 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）
 
 ```
 curl -X POST \
@@ -347,33 +351,33 @@ curl -X POST \
      http://127.0.0.1:8001/apis/personapi/plugins 
 ```
 
-白名单内IP访问：
+   * 白名单内IP访问：
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
+   ```
+   curl -H 'Host: personapi' http://127.0.0.1:8000
 
-[
-    {"pid":1,"name":"lucien","age":30},
-    {"pid":2,"name":"Joe","age":28},
-    {"pid":3,"name":"smith","age":32},
-    {"pid":4,"name":"Tod","age":56},
-    {"pid":5,"name":"linken","age":34},
-    {"pid":6,"name":"truple","age":23},
-    {"pid":7,"name":"tdt","age":20}
-]
-```
+   [
+       {"pid":1,"name":"lucien","age":30},
+       {"pid":2,"name":"Joe","age":28},
+       {"pid":3,"name":"smith","age":32},
+       {"pid":4,"name":"Tod","age":56},
+       {"pid":5,"name":"linken","age":34},
+       {"pid":6,"name":"truple","age":23},
+       {"pid":7,"name":"tdt","age":20}
+   ]
+   ```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
-其他IP访问：
+   * 其他IP访问：
 
-```
-curl -H 'Host: personapi' http://172.17.0.1:8000
+   ```
+   curl -H 'Host: personapi' http://172.17.0.1:8000
 
-{
-    "message":"Your IP address is not allowed"
-}
-```
+   {
+       "message":"Your IP address is not allowed"
+   }
+   ```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
 
@@ -383,7 +387,7 @@ newinfo端口无需配置此插件。
 
 user端口通过Rate Limiting插件控制用户访问频率，避免无限制访问。
 
-* 为user端口添加Rate Limiting插件扩展，设置为1分钟内只能访问1次
+1. 为user端口添加Rate Limiting插件扩展（此处设置1分钟内只能访问1次）
 
 ```
 curl -X POST \
@@ -392,33 +396,33 @@ curl -X POST \
      http://127.0.0.1:8001/apis/personapi/plugins 
 ```
 
-正常访问展示:
+   * 正常访问展示:
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
+   ```
+   curl -H 'Host: personapi' http://127.0.0.1:8000
 
-[
-    {"pid":1,"name":"lucien","age":30},
-    {"pid":2,"name":"Joe","age":28},
-    {"pid":3,"name":"smith","age":32},
-    {"pid":4,"name":"Tod","age":56},
-    {"pid":5,"name":"linken","age":34},
-    {"pid":6,"name":"truple","age":23},
-    {"pid":7,"name":"tdt","age":20}
-]
-```
+   [
+       {"pid":1,"name":"lucien","age":30},
+       {"pid":2,"name":"Joe","age":28},
+       {"pid":3,"name":"smith","age":32},
+       {"pid":4,"name":"Tod","age":56},
+       {"pid":5,"name":"linken","age":34},
+       {"pid":6,"name":"truple","age":23},
+       {"pid":7,"name":"tdt","age":20}
+   ]
+   ```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
-超出次数的访问展示:
+   * 超出次数的访问展示:
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
+   ```
+   curl -H 'Host: personapi' http://127.0.0.1:8000
 
-{
-    "message":"API rate limit exceeded"
-}
-```
+   {
+       "message":"API rate limit exceeded"
+   }
+   ```
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
 
@@ -428,7 +432,7 @@ newinfo端口无需配置此插件。
 
 user端口通过File-log插件实现对于每次访问日志的获取，需要注意为日志文件写权限，日志格式参考[Log Format](https://getkong.org/plugins/file-log/#log-format)。
 
-* 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
+1. 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
 
 ```
 curl -X POST \
@@ -437,7 +441,7 @@ curl -X POST \
      http://127.0.0.1:8001/apis/personapi/plugins 
 ```
 
-* 添加日志插件后，每次访问都会被记录
+2. 添加日志插件后，每次访问都会被记录
 
 <div align=center><img width="600" height="" src="./image/kong-proxyperson-filelog.png"/></div>
 
