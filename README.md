@@ -361,59 +361,6 @@ newinfo端口由于数据不敏感，无需特殊配置。
 
 ## <a name="SECURITY"></a>SECURITY实现
 
-通过添加IP Restriction插件，实现对user端口的访问限制，即仅规定IP可访问。
-
-1. 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）
-
-```
-curl -X POST \
-     --data 'name=ip-restriction' \
-     --data 'config.whitelist=172.17.0.1' \
-     http://127.0.0.1:8001/apis/personapi/plugins 
-```
-
-2. 访问效果：
-
-   * 白名单内IP访问：
-   
-   命令：
-
-   ```
-   curl -H 'Host: personapi' http://127.0.0.1:8000
-   ```
-
-   返回：
-
-   ```JSON
-   [
-       {"pid":1,"name":"lucien","age":30},
-       {"pid":2,"name":"Joe","age":28},
-       {"pid":3,"name":"smith","age":32},
-       {"pid":4,"name":"Tod","age":56},
-       {"pid":5,"name":"linken","age":34},
-       {"pid":6,"name":"truple","age":23},
-       {"pid":7,"name":"tdt","age":20}
-   ]
-   ```
-
-   * 其他IP访问：
-   
-   命令：
-
-   ```
-   curl -H 'Host: personapi' http://172.17.0.1:8000
-   ```
-   
-   返回：
-
-   ```JSON
-   {
-       "message":"Your IP address is not allowed"
-   }
-   ```
-
-newinfo端口无需配置此插件。
-
 ## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
 
 user端口通过Rate Limiting插件控制用户访问频率，避免无限制访问。
