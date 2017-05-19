@@ -373,11 +373,17 @@ curl -X POST \
 ```
 
    * 白名单内IP访问：
+   
+   命令：
 
    ```
    curl -H 'Host: personapi' http://127.0.0.1:8000
-
-   [
+   ```
+   
+   返回：
+   
+   ```JSON
+   [
        {"pid":1,"name":"lucien","age":30},
        {"pid":2,"name":"Joe","age":28},
        {"pid":3,"name":"smith","age":32},
@@ -391,10 +397,16 @@ curl -X POST \
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
    * 其他IP访问：
+   
+   命令：
 
    ```
    curl -H 'Host: personapi' http://172.17.0.1:8000
-
+   ```
+   
+   返回：
+   
+   ```JSON
    {
        "message":"Your IP address is not allowed"
    }
@@ -418,10 +430,16 @@ curl -X POST \
 ```
 
    * 正常访问展示:
+   
+   命令：
 
    ```
    curl -H 'Host: personapi' http://127.0.0.1:8000
-
+   ```
+   
+   返回：
+   
+   ```JSON
    [
        {"pid":1,"name":"lucien","age":30},
        {"pid":2,"name":"Joe","age":28},
@@ -436,10 +454,16 @@ curl -X POST \
 <div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
 
    * 超出次数的访问展示:
+   
+   命令：
 
    ```
    curl -H 'Host: personapi' http://127.0.0.1:8000
-
+   ```
+   
+   返回：
+   
+   ```JSON
    {
        "message":"API rate limit exceeded"
    }
