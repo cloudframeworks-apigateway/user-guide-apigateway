@@ -36,58 +36,58 @@
 
 2. 启动两个web站点用于测试
 
-   ```
-   docker pull goodraincloudframeworks/springdata
-   docker run -d -p 8080:8080 goodraincloudframeworks/springdata
-   ```
+    ```
+    docker pull goodraincloudframeworks/springdata
+    docker run -d -p 8080:8080 goodraincloudframeworks/springdata
+    ```
 
 3. 启动kong
    
-   ```
-   docker pull kong
-   docker pull postgres
-   docker run -d --name kong-database \
-                 -p 5432:5432 \
-                 -e "POSTGRES_USER=kong" \
-                 -e "POSTGRES_DB=kong" \
-                 postgres
-   docker run -d --name kong \
-                 --link kong-database:kong-database \
-                 -e "KONG_DATABASE=postgres" \
-                 -e "KONG_PG_HOST=kong-database" \
-                 -p 8000:8000 \
-                 -p 8443:8443 \
-                 -p 8001:8001 \
-                 -p 7946:7946 \
-                 -p 7946:7946/udp \
-                 kong
-   ```
+    ```
+    docker pull kong
+    docker pull postgres
+    docker run -d --name kong-database \
+                  -p 5432:5432 \
+                  -e "POSTGRES_USER=kong" \
+                  -e "POSTGRES_DB=kong" \
+                  postgres
+    docker run -d --name kong \
+                  --link kong-database:kong-database \
+                  -e "KONG_DATABASE=postgres" \
+                  -e "KONG_PG_HOST=kong-database" \
+                  -p 8000:8000 \
+                  -p 8443:8443 \
+                  -p 8001:8001 \
+                  -p 7946:7946 \
+                  -p 7946:7946/udp \
+                  kong
+    ```
 4. 启动kong-dashboard（可选）
 
-   ```
-   docker pull goodraincloudframeworks/docker-kong-dashboard
-   docker run -d -p 5000:5000 goodraincloudframeworks/docker-kong-dashboard
-   ```
+    ```
+    docker pull goodraincloudframeworks/docker-kong-dashboard
+    docker run -d -p 5000:5000 goodraincloudframeworks/docker-kong-dashboard
+    ```
 
 5. 基于[docker-compose](https://docs.docker.com/compose/install/)运行如下命令
 
-   ```
-   docker-compose -f docker-compose.yml up -d
-   ```
+    ```
+    docker-compose -f docker-compose.yml up -d
+    ```
 
 6. 访问路径
 
-   http://127.0.0.1:8000 - kong url
+    http://127.0.0.1:8000 - kong url
    
-   http://127.0.0.1:8001 - kong admin url
+    http://127.0.0.1:8001 - kong admin url
    
-   https://127.0.0.1:8443 - kong https url
+    https://127.0.0.1:8443 - kong https url
    
-   http://127.0.0.1:5000 - kong dashboard ui
+    http://127.0.0.1:5000 - kong dashboard ui
+    
+    https://172.16.0.133:8080/api/persons - user api url
    
-   https://172.16.0.133:8080/api/persons - user api url
-   
-   https://172.16.0.133:8080/api/newinfos - newinfo api url
+    https://172.16.0.133:8080/api/newinfos - newinfo api url
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
