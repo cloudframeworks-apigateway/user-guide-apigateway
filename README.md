@@ -270,92 +270,92 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 1. 注册Oauth2插件，详情参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
-```
-curl -X POST \
-     --data 'name=oauth2' \
-     --data 'enable_password_grant=true' \
-     --data 'provision_key=qwe1238amsdh23' \
-     --data 'config.scopes=read,write' \
-     http://127.0.0.1:8001/apis/personapi/plugins 
-```
+    ```
+    curl -X POST \
+        --data 'name=oauth2' \
+        --data 'enable_password_grant=true' \
+        --data 'provision_key=qwe1238amsdh23' \
+        --data 'config.scopes=read,write' \
+        http://127.0.0.1:8001/apis/personapi/plugins 
+    ```
 
 2. 添加Consumer及Consumer对应的credentials
 
-```
-curl -X POST \
-    --data "username=oauthadmin" \
-    --data "custom_id=personapi"
-    http://127.0.0.1:8001/consumers/ \
-```
+    ```
+    curl -X POST \
+        --data "username=oauthadmin" \
+        --data "custom_id=personapi"
+        http://127.0.0.1:8001/consumers/ \
+    ```
 
-```
-curl -X POST \
-    --data "name=oauthadmin" \
-    --data "redirect_uri=https://172.16.0.133:8080/api/persons"
-    http://127.0.0.1:8001/consumers/personapi/oauth2
-```
+    ```
+    curl -X POST \
+        --data "name=oauthadmin" \
+        --data "redirect_uri=https://172.16.0.133:8080/api/persons"
+        http://127.0.0.1:8001/consumers/personapi/oauth2
+    ```
 
 3. 申请accesstoken并访问
 
-```
-curl -k -H 'Host: personapi' \
-    --data "client_id=5bee1b6679e5463599d7ce64b14c2795" \
-    --data "client_secret=54f2a058f30f46e8b5ccc8d6788eb081" \
-    --data "provision_key=qwe1238amsdh23" \
-    --data "authenticated_userid=b48bf407-c2b7-41a9-8e0f-43eead2fc60f" 
-    --data "grant_type=password" 
-    https://127.0.0.1:8443/oauth2/token
+    ```
+    curl -k -H 'Host: personapi' \
+        --data "client_id=5bee1b6679e5463599d7ce64b14c2795" \
+        --data "client_secret=54f2a058f30f46e8b5ccc8d6788eb081" \
+        --data "provision_key=qwe1238amsdh23" \
+        --data "authenticated_userid=b48bf407-c2b7-41a9-8e0f-43eead2fc60f" 
+        --data "grant_type=password" 
+        https://127.0.0.1:8443/oauth2/token
 
-{
-    "refresh_token":"e87d871957eb4717bb0002054ae8c9a3",
-    "token_type":"bearer",
-    "access_token":"bad2a7ee579e4389880ae29b3610c639",
-    "expires_in":7200
-}
-```
+    {
+        "refresh_token":"e87d871957eb4717bb0002054ae8c9a3",
+        "token_type":"bearer",
+        "access_token":"bad2a7ee579e4389880ae29b3610c639",
+        "expires_in":7200
+    }
+    ```
 
 4. 访问
 
-* 使用token访问user api
+    * 使用token访问user api
 
-命令：
+        命令：
 
-```
-curl -H 'Host: personapi' \
-     -H 'Authorization: bearer bad2a7ee579e4389880ae29b3610c639' \
-     http://127.0.0.1:8000
-```
+        ```
+        curl -H 'Host: personapi' \
+            -H 'Authorization: bearer bad2a7ee579e4389880ae29b3610c639' \
+            http://127.0.0.1:8000
+        ```
 
-返回：
+        返回：
 
-```JSON
-[
-    {"pid":1,"name":"lucien","age":30},
-    {"pid":2,"name":"Joe","age":28},
-    {"pid":3,"name":"smith","age":32},
-    {"pid":4,"name":"Tod","age":56},
-    {"pid":5,"name":"linken","age":34},
-    {"pid":6,"name":"truple","age":23},
-    {"pid":7,"name":"tdt","age":20}
-]
-```
+        ```JSON
+        [
+            {"pid":1,"name":"lucien","age":30},
+            {"pid":2,"name":"Joe","age":28},
+            {"pid":3,"name":"smith","age":32},
+            {"pid":4,"name":"Tod","age":56},
+            {"pid":5,"name":"linken","age":34},
+            {"pid":6,"name":"truple","age":23},
+            {"pid":7,"name":"tdt","age":20}
+        ]
+        ```
 
 * 不使用token访问user api
 
-命令： 
+        命令： 
 
-```
-curl -H 'Host: personapi' http://127.0.0.1:8000
-```
+        ```
+        curl -H 'Host: personapi' http://127.0.0.1:8000
+        ```
 
-返回：
+        返回：
 
-```
-{
-    "error_description":"The access token is missing",
-    "error":"invalid_request"
-}
-```
+        ```
+        {
+            "error_description":"The access token is missing",
+            "error":"invalid_request"
+        }
+        ```
 
 newinfo端口由于数据不敏感，无需特殊配置。
 
