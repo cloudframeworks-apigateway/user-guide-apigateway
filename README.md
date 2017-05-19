@@ -394,8 +394,6 @@ curl -X POST \
    ]
    ```
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
-
    * 其他IP访问：
    
    命令：
@@ -411,8 +409,6 @@ curl -X POST \
        "message":"Your IP address is not allowed"
    }
    ```
-
-<div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
 
 newinfo端口无需配置此插件。
 
@@ -451,8 +447,6 @@ curl -X POST \
    ]
    ```
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
-
    * 超出次数的访问展示:
    
    命令：
@@ -468,8 +462,6 @@ curl -X POST \
        "message":"API rate limit exceeded"
    }
    ```
-
-<div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
 
 newinfo端口无需配置此插件。
 
