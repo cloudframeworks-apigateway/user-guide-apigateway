@@ -147,7 +147,7 @@ curl -i -X POST \
 
 API可能没有用户概念，会出现随意调用的情况。为此Kong提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API。
 
-首先创建一个consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
+1. 创建一个consumer
 
 ```
 curl -X POST \
@@ -155,18 +155,19 @@ curl -X POST \
     --data "custom_id=personapi"
     http://127.0.0.1:8001/consumers/ \
 ```
+
+2. 在key-auth插件中为此consumer生成key
+
 ```
 curl -X POST \
     http://127.0.0.1:8001/consumers/personapi/key-auth \
 ```
 
-<div align=center><img width="600" height="" src="./image/keyauth.png"/></div>
-
-需要注意的是：
+此时即可使用key来通过权限验证访问API了，需要注意的是：
 
 * 若另一API也开通了key-auth插件，那么这个consumer也是可以通过key-auth验证访问这个API的，想要控制这种情况，需借助Kong的[ACL插件](https://getkong.org/plugins/acl/)
 
-* 对于Kong来讲，认证与权限是两个不同的东西
+* 对于Kong来讲，认证与权限是两个不同的概念
 
 ### <a name="API添加插件"></a>API添加插件
 
