@@ -1,5 +1,7 @@
 # KONG DASHBOARD方法
 
+127.0.0.127为例
+
 ## KONG基本使用
 
 ### 首次使用
@@ -120,7 +122,7 @@ Whitelist：127.17.0.1 （可按需要修改）
 
 ## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
 
-**user端口添加Rate limiting插件扩展，并设置1分中内只能访问1次*
+**user端口添加Rate limiting插件扩展，并设置1分中内只能访问1次**
 
 API：personapi
 
