@@ -37,9 +37,8 @@
 2. 启动两个web站点用于测试
 
    ```
-   docker pull nginx:alpine
-   docker run -d -p 9001:80 nginx:alpine
-   docker run -d -p 9002:80 nginx:alpine
+   docker pull goodraincloudframeworks:springdata
+   docker run -d -p 8080:8080 goodraincloudframeworks:springdata
    ```
 
 3. 启动kong
@@ -86,9 +85,9 @@
    
    http://127.0.0.1:5000 - kong dashboard ui
    
-   https://127.0.0.1:8080/api/persons - user api url
+   https://172.16.0.133:8080/api/persons - user api url
    
-   https://127.0.0.1:8080/api/newinfos - newinfo api url
+   https://172.16.0.133:8080/api/newinfos - newinfo api url
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
@@ -149,6 +148,17 @@ curl -i -X POST \
 API可能没有用户概念，会出现随意调用的情况。为此Kong提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API。
 
 首先创建一个consumer，然后在key-auth插件中为这个consumer生成一个key，然后就可以使用这个key来透过权限验证访问API了。
+
+```
+curl -X POST \
+    --data "username=oauthadmin" \
+    --data "custom_id=personapi"
+    http://127.0.0.1:8001/consumers/ \
+```
+```
+curl -X POST \
+    http://127.0.0.1:8001/consumers/personapi/key-auth \
+```
 
 <div align=center><img width="600" height="" src="./image/keyauth.png"/></div>
 
@@ -267,7 +277,7 @@ curl -X POST \
 curl -X POST \
     --data "name=oauthadmin" \
     --data "redirect_uri=https://172.16.0.133:8080/api/persons"
-    http://kong:8001/consumers/personapi/oauth2 \
+    http://127.0.0.1:8001/consumers/personapi/oauth2
 ```
 
 * 申请accesstoken并访问
