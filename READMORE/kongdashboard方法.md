@@ -120,28 +120,22 @@ Whitelist：127.17.0.1 （可按需要修改）
 
 ## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
 
-* 为user端口添加Rate Limiting插件扩展，设置为1分钟内只能访问1次
+**user端口添加Rate limiting插件扩展，并设置1分中内只能访问1次*
 
-<div align=center><img width="600" height="" src="./image/plugin-person-ratelimiting.png"/></div>
+API：personapi
 
-正常访问展示:
+Minute：1
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
-
-超出次数的访问展示:
-
-<div align=center><img width="600" height="" src="./image/kong-proxyperson-ratefail.png"/></div>
-
-newinfo端口无需配置此插件。
+图addratelimiting
 
 ## <a name="LOGGING"></a>LOGGING实现
 
-* 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
+**为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log**
 
-<div align=center><img width="600" height="" src="./image/plugin-person-filelog.png"/></div>
+API：personapi
 
-* 添加日志插件后，每次访问都会被记录
+Path：/tmp/file.log
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson-filelog.png"/></div>
+Reopen：YES
 
-newinfo端口无需配置此插件。
+图addfilelog
