@@ -64,7 +64,7 @@ Name：newinfoapi
 
 Hosts：newinfoapi
 
-Upstream url：upstream_url=https://172.16.0.127:8080/api/newinfos
+Upstream url：https://172.16.0.127:8080/api/newinfos
 
 图addnewinfoapi
 
