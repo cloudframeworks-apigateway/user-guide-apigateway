@@ -76,35 +76,47 @@ newinfo端口：https://127.0.0.1:8080/api/newinfos
 
 ## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
-**注册Oauth2插件**
+**user端口添加Oauth2插件**
+
+API：personapi
+
+Plugin：oauth2
+
+Provision key：PASSWORD （按需填写）
+
+勾选：Enable password grant （按需选择）
 
 图addoauth2
 
 **添加Consumer**
 
+Username：oauthadmin
+
+Custom id：personapi
+
 图addoauth2consumer
 
 **添加对应Credentials**
 
-图addoauth2consumercredentials
+Username：oauthadmin
 
-newinfo端口由于数据不敏感，无需特殊配置。
+Redirecting url：https://172.16.0.127:8080/api/persons
+
+图addoauth2consumercredentials
 
 ## <a name="SECURITY"></a>SECURITY实现
 
-* 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）。
+**user端口添加IP Restriction插件扩展，并设置白名单**
 
-<div align=center><img width="600" height="" src="./image/plugin-person-ip.png"/></div>
+API：personapi
 
-白名单内IP访问：
+Plugin：ip-restriction
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson.png"/></div>
+Apply to：All Consumers
 
-其他IP访问：
+Whitelist：127.17.0.1 （可按需要修改）
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson-ipfail.png"/></div>
-
-newinfo端口无需配置此插件。
+图addiprestriction
 
 ## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
 
