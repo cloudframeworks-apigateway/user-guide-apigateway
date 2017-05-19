@@ -1,5 +1,9 @@
 # KONG DASHBOARD方法
 
+## KONG基本使用
+
+### 首次使用
+
 首次访问 http://locaslhost:5000 ，将出现Kong node configuration页面。
 
 图kongforfirsttime
