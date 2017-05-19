@@ -76,13 +76,17 @@ newinfo端口：https://127.0.0.1:8080/api/newinfos
 
 ## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
-* 注册Oauth2插件，参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
+**注册Oauth2插件**
 
-<div align=center><img width="600" height="" src="./image/plugin-person-oauth2.png"/></div>
+图addoauth2
 
-* 添加Consumer及Consumer对应的credentials
+**添加Consumer**
 
-<div align=center><img width="600" height="" src="./image/plugin-person-oauth2user.png"/></div>
+图addoauth2consumer
+
+**添加对应Credentials**
+
+图addoauth2consumercredentials
 
 newinfo端口由于数据不敏感，无需特殊配置。
 
