@@ -37,8 +37,8 @@
 2. 启动两个web站点用于测试
 
    ```
-   docker pull goodraincloudframeworks:springdata
-   docker run -d -p 8080:8080 goodraincloudframeworks:springdata
+   docker pull goodraincloudframeworks/springdata
+   docker run -d -p 8080:8080 goodraincloudframeworks/springdata
    ```
 
 3. 启动kong
