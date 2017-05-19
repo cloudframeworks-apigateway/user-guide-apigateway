@@ -503,14 +503,14 @@ newinfo端口无需配置此插件。
    ```
      
 3. 新增插件
-    
-   ```
-   cd ${KONG_DIR}
-   cd kong
-   mkdir custom_plugins
-   cd custom_plugins
-   mkdir xxx
-   ```
+   
+```
+cd ${KONG_DIR}
+cd kong
+mkdir custom_plugins
+cd custom_plugins
+mkdir xxx
+```
      
 4. 编辑插件的schema.lua、handler.lua, 根据实际情况完成插件逻辑（[lua教程](http://www.runoob.com/lua/lua-tutorial.html)）
 
