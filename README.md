@@ -223,44 +223,44 @@ curl -i -X POST \
 
 3. 注册成功后即可通过Kong代理访问
 
-   * 用户信息（user端口）
+    * 用户信息（user端口）
    
-   命令：
+    命令：
 
-   ```
-   curl -H 'Host: personapi' http://127.0.0.1:8000
-   ```
+    ```
+    curl -H 'Host: personapi' http://127.0.0.1:8000
+    ```
    
-   返回：
+    返回：
    
-   ```JSON
-   [
-       {"pid":1,"name":"lucien","age":30},
-       {"pid":2,"name":"Joe","age":28},
-       {"pid":3,"name":"smith","age":32},
-       {"pid":4,"name":"Tod","age":56},
-       {"pid":5,"name":"linken","age":34},
-       {"pid":6,"name":"truple","age":23},
-       {"pid":7,"name":"tdt","age":20}
-   ]
-   ```
+    ```JSON
+    [
+        {"pid":1,"name":"lucien","age":30},
+        {"pid":2,"name":"Joe","age":28},
+        {"pid":3,"name":"smith","age":32},
+        {"pid":4,"name":"Tod","age":56},
+        {"pid":5,"name":"linken","age":34},
+        {"pid":6,"name":"truple","age":23},
+        {"pid":7,"name":"tdt","age":20}
+    ]
+    ```
 
-   * 新闻信息（newinfo端口）
+    * 新闻信息（newinfo端口）
    
-   命令：
+    命令：
 
-   ```
-   curl -H 'Host: newinfoapi' http://127.0.0.1:8000
-   ```
+    ```
+    curl -H 'Host: newinfoapi' http://127.0.0.1:8000
+    ```
    
-   返回：
+    返回：
    
-   ```JSON
-   [
-       {"nid":1,"title":"一路一代代","content":"what happending...."},
-       {"nid":2,"title":"雪中悍刀行","content":"人生三不朽,立功立德立言"}
-   ]
-   ```
+    ```JSON
+    [
+        {"nid":1,"title":"一路一代代","content":"what happending...."},
+        {"nid":2,"title":"雪中悍刀行","content":"人生三不朽,立功立德立言"}
+    ]
+    ```
 
 此时，可以将用户信息、新闻通知对外访问控制限制为只有Kong可以访问，外部请求全部通过Kong进行代理。
 
