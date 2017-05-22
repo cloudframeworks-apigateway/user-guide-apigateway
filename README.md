@@ -1,4 +1,4 @@
-# [云框架]KONG API Gateway
+# [云框架]KONG API Gateway v1.0
 
 ![](https://img.shields.io/badge/release-v0.1-green.svg)
 [![](https://img.shields.io/badge/Producer-lucienu2-orange.svg)](CONTRIBUTORS.md)
