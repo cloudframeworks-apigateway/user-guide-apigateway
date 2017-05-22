@@ -1,0 +1,52 @@
+## 快速部署
+
+1. [准备Docker环境](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/install%20docker.md)
+
+2. 启动两个web站点用于测试
+
+    ```
+    docker pull goodraincloudframeworks/springdata
+    docker run -d -p 8080:8080 goodraincloudframeworks/springdata
+    ```
+
+3. 启动kong
+   
+    ```
+    docker pull kong
+    docker pull postgres
+    docker run -d --name kong-database \
+                  -p 5432:5432 \
+                  -e "POSTGRES_USER=kong" \
+                  -e "POSTGRES_DB=kong" \
+                  postgres
+    docker run -d --name kong \
+                  --link kong-database:kong-database \
+                  -e "KONG_DATABASE=postgres" \
+                  -e "KONG_PG_HOST=kong-database" \
+                  -p 8000:8000 \
+                  -p 8443:8443 \
+                  -p 8001:8001 \
+                  -p 7946:7946 \
+                  -p 7946:7946/udp \
+                  kong
+    ```
+4. 启动kong-dashboard（optional）
+
+    ```
+    docker pull goodraincloudframeworks/docker-kong-dashboard
+    docker run -d -p 5000:5000 goodraincloudframeworks/docker-kong-dashboard
+    ```
+
+5. 访问路径
+
+    http://本机IP:8000 - kong url
+   
+    http://本机IP:8001 - kong admin url
+   
+    https://本机IP:8443 - kong https url
+   
+    http://本机IP:5000 - kong dashboard ui
+
+    https://本机IP:8080/api/persons - user api url
+    
+    https://本机IP:8080/api/newinfos - newinfo api url
