@@ -10,7 +10,7 @@
 
 在众多API GATEWAY框架中，Mashape开源的高性能高可用API网关和API服务管理层——[KONG](https://getkong.org/)（基于NGINX）特点尤为突出，它可以通过插件扩展已有功能，这些插件（使用lua编写）在API请求响应循环的生命周期中被执行。于此同时，KONG本身提供包括HTTP基本认证、密钥认证、CORS、TCP、UDP、文件日志、API请求限流、请求转发及NGINX监控等基本功能。目前，Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。
 
-本篇[云框架](ABOUT.md)将结合一个**数据查询应用**介绍KONG API GATEWAY及其最佳实践方法。
+本篇[云框架](ABOUT.md)将结合一个**[数据查询应用](https://github.com/cloudframeworks-apigateway/springdata)**介绍KONG API GATEWAY及其最佳实践方法。
 
 # 内容概览
 
@@ -241,7 +241,7 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 ## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
-通过OAuth 2.0 Authentication插件实现user端口的用户访问限制，
+通过[OAuth 2.0 Authentication](https://github.com/cloudframeworks-apigateway/kongplugin/tree/master/kong/plugins/oauth2)插件实现user端口的用户访问限制，
 
 1. 注册Oauth2插件，详情参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
@@ -336,7 +336,7 @@ newinfo端口由于数据不敏感，无需特殊配置。
 
 ## <a name="SECURITY"></a>SECURITY实现
 
-通过添加IP Restriction插件，实现对user端口的访问限制，即仅规定IP可访问。
+通过添加[IP Restriction](https://github.com/cloudframeworks-apigateway/kongplugin/tree/master/kong/plugins/ip-restriction)插件，实现对user端口的访问限制，即仅规定IP可访问。
 
 1. 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）
 
@@ -391,7 +391,7 @@ newinfo端口无需配置此插件。
 
 ## <a name="TRAFFICCONTROL"></a>TRAFFIC CONTROL实现
 
-user端口通过Rate Limiting插件控制用户访问频率，避免无限制访问。
+user端口通过[Rate Limiting](https://github.com/cloudframeworks-apigateway/kongplugin/tree/master/kong/plugins/rate-limiting)插件控制用户访问频率，避免无限制访问。
 
 1. 为user端口添加Rate Limiting插件扩展（此处设置1分钟内只能访问1次）
 
@@ -446,7 +446,7 @@ newinfo端口无需配置此插件。
 
 ## <a name="LOGGING"></a>LOGGING实现
 
-user端口通过File-log插件实现对于每次访问日志的获取，需要注意为日志文件写权限，日志格式参考[Log Format](https://getkong.org/plugins/file-log/#log-format)。
+user端口通过[File-log](https://github.com/cloudframeworks-apigateway/kongplugin/tree/master/kong/plugins/file-log)插件实现对于每次访问日志的获取，需要注意为日志文件写权限，日志格式参考[Log Format](https://getkong.org/plugins/file-log/#log-format)。
 
 1. 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
 
