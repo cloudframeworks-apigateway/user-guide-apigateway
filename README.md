@@ -193,13 +193,9 @@ API可能没有用户概念，会出现随意调用的情况。为此Kong提供�
     curl -H 'Host: personapi' -H 'TT: 78182b121a074fe6961555d802e40b3b' http://127.0.0.1:8000
     ```
 
-    <div align=center><img width="600" height="" src="./image/keyauthsucc.png"/></div>
-
     ```
     curl -H 'Host: personapi' http://127.0.0.1:8000/
     ```
-
-    <div align=center><img width="600" height="" src="./image/keyauthfailed.png"/></div>
 
 ## <a name="ROUTING"></a>ROUTING实现
 
@@ -209,23 +205,23 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 1. 注册user api
 
-    ```
+```
     curl -i -X POST \
           --url http://127.0.0.1:8001/apis/ \
           --data 'name=personapi' \
           --data 'hosts=personapi' \
           --data 'upstream_url=https://本机IP:8080/api/persons'
-    ```
+```
 
 2. 注册newinfo api
 
-    ```
+```
     curl -i -X POST \
           --url http://127.0.0.1:8001/apis/ \
          --data 'name=newinfoapi' \
          --data 'hosts=newinfoapi' \
          --data 'upstream_url=https://本机IP:8080/api/newinfos'
-    ```
+```
 
 3. 注册成功后即可通过Kong代理访问
 
