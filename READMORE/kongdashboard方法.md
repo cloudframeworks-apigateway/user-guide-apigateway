@@ -4,7 +4,7 @@ KONG代理方式包括：1）应用通过携带HOST头部路由到对应的API�
 
 这里采用前者，因此通过DASHBOARD管理配置KONG，新增API或使用API可以为浏览器安装Modify Header插件以便访问。
 
-如访问personapi，插件参数设置为：
+如访问personapi（即实例中user端口），插件参数设置为：
 
 * name：HOST；
 
