@@ -1,5 +1,9 @@
 # KONG DASHBOARD方法
 
+KONG代理方式包括：1）应用通过携带HOST头部路由到对应的API应用；2）通过不同的uri路由到API应用
+
+这里采用前者，因此通过DASHBOARD管理配置KONG可以为浏览器安装Modify Header插件。
+
 ## KONG基本使用
 
 ### 首次使用
