@@ -70,7 +70,7 @@ Hosts：newinfoapi
 
 Upstream url：https://本机IP:8080/api/newinfos
 
-<div align=center><img width="900" height="" src="./image/addnewinfosapi.png"/></div>
+<div align=center><img width="900" height="" src="./image/addnewinfoapi.png"/></div>
 
 **通过Kong代理访问**
 
