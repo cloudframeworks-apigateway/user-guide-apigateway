@@ -85,7 +85,7 @@
    
     http://127.0.0.1:5000 - kong dashboard ui
     
-    https://本机IP:8080/api/persons - user api url
+    https://本机IP:8080/api/persons - user api url
     
     https://本机IP:8080/api/newinfos - newinfo api url
 
