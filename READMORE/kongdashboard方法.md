@@ -6,7 +6,7 @@ KONG代理方式包括：1）应用通过携带HOST头部路由到对应的API�
 
 如访问personapi（即实例中user端口），插件参数设置为：
 
-* name：HOST；
+* name：HOST
 
 * value：personapi
 
