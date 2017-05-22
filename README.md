@@ -40,7 +40,7 @@
     git clone https://github.com/cloudframeworks-apigateway/user-guide-apigateway
     ```
 
-3. 基于[docker-compose](https://docs.docker.com/compose/install/)运行命令
+3. 基于[docker-compose](https://docs.docker.com/compose/install/)运行命令 [docker-compose.yml](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/docker-compose.yml)
 
     ```
     docker-compose -f docker-compose.yml up -d
