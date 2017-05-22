@@ -1,7 +1,5 @@
 # KONG DASHBOARD方法
 
-127.0.0.127为例
-
 ## KONG基本使用
 
 ### 首次使用
@@ -56,7 +54,7 @@ Name：persons
 
 Hosts：persons
 
-Upstream url：https://172.16.0.127:8080/api/persons
+Upstream url：https://本机IP:8080/api/persons
 
 <div align=center><img width="900" height="" src="./image/adduserapi.png"/></div>
 
@@ -66,7 +64,7 @@ Name：newinfoapi
 
 Hosts：newinfoapi
 
-Upstream url：https://172.16.0.127:8080/api/newinfos
+Upstream url：https://本机IP:8080/api/newinfos
 
 <div align=center><img width="900" height="" src="./image/addnewinfosapi.png"/></div>
 
@@ -102,7 +100,7 @@ Custom id：personapi
 
 Username：oauthadmin
 
-Redirecting url：https://172.16.0.127:8080/api/persons
+Redirecting url：https://本机IP:8080/api/persons
 
 <div align=center><img width="900" height="" src="./image/addoauth2consumercredentials.png"/></div>
 
