@@ -60,6 +60,8 @@
     
     https://本机IP:8080/api/newinfos - newinfo api url
 
+**[查看分步快速部署](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/%E5%88%86%E6%AD%A5%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2.md)**
+
 # <a name="框架说明-业务"></a>框架说明-业务
 
 数据查询应用，顾名思义提供简单的数据查询服务，应用对外提供两个端口：
