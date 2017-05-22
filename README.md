@@ -12,6 +12,8 @@
 
 本篇[云框架](ABOUT.md)将结合一个[数据查询应用](https://github.com/cloudframeworks-apigateway/springdata)介绍KONG API GATEWAY及其最佳实践方法。
 
+相关云框架：[[云框架]基于Spring Cloud的微服务架构-用户指南](https://github.com/cloudframeworks-springcloud/user-guide-springcloud)
+
 # 内容概览
 
 * [快速部署](#快速部署)
