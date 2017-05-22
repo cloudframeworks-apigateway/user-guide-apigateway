@@ -486,8 +486,6 @@ curl -X POST \
 
 2. 添加日志插件后，每次访问都会被记录
 
-<div align=center><img width="600" height="" src="./image/kong-proxyperson-filelog.png"/></div>
-
 newinfo端口无需配置此插件。
 
 # <a name="KONG插件开发"></a>KONG插件开发
