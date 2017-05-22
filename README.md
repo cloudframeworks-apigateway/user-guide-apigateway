@@ -85,9 +85,9 @@
    
     http://127.0.0.1:5000 - kong dashboard ui
     
-    https://172.16.0.133:8080/api/persons - user api url
+    https://本机IP:8080/api/persons - user api url
    
-    https://172.16.0.133:8080/api/newinfos - newinfo api url
+    https://本机IP:8080/api/newinfos - newinfo api url
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
@@ -133,19 +133,19 @@
 
 ### <a name="注册API"></a>注册API
 
-使用Kong代理API，首先需要把API注册到Kong，并通过返回数据查看注册是否成功：
+使用Kong代理API，首先需要把API注册到Kong，并通过返回数据查看注册是否成功，如：
 
 ```
 curl -i -X POST \
       --url http://127.0.0.1:8001/apis/ \
       --data 'name=personapi' \
       --data 'hosts=personapi' \
-      --data 'upstream_url=https://172.16.0.133:8080/api/persons'
+      --data 'upstream_url=https://本机IP:8080/api/persons'          # 本机IP通过ifconfig查看
 ```
 
 ### <a name="添加用户"></a>添加用户
 
-API可能没有用户概念，会出现随意调用的情况。为此Kong提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API。
+API可能没有用户概念，会出现随意调用的情况。为此Kong提供了一种consumer对象（全局共用），如某API启用了key-auth，没有身份的访问者将无法调用该API，如：
 
 1. 创建一个consumer
 
@@ -208,8 +208,8 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
           --url http://127.0.0.1:8001/apis/ \
           --data 'name=personapi' \
           --data 'hosts=personapi' \
-          --data 'upstream_url=https://172.16.0.133:8080/api/persons'
-    ```
+          --data 'upstream_url=https://172.16.0.133:8080/api/persons'          #本机IP通过ifconfig查看
+    ```
 
 2. 注册newinfo api
 
@@ -218,8 +218,8 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
           --url http://127.0.0.1:8001/apis/ \
          --data 'name=newinfoapi' \
          --data 'hosts=newinfoapi' \
-         --data 'upstream_url=https://172.16.0.133:8080/api/newinfos'
-    ```
+         --data 'upstream_url=https://172.16.0.133:8080/api/newinfos'          #本机IP通过ifconfig查看
+    ```
 
 3. 注册成功后即可通过Kong代理访问
 
