@@ -10,7 +10,7 @@
 
 在众多API GATEWAY框架中，Mashape开源的高性能高可用API网关和API服务管理层——[KONG](https://getkong.org/)（基于NGINX）特点尤为突出，它可以通过插件扩展已有功能，这些插件（使用lua编写）在API请求响应循环的生命周期中被执行。于此同时，KONG本身提供包括HTTP基本认证、密钥认证、CORS、TCP、UDP、文件日志、API请求限流、请求转发及NGINX监控等基本功能。目前，Kong在Mashape管理了超过15,000个API，为200,000开发者提供了每月数十亿的请求支持。
 
-本篇[云框架](ABOUT.md)将结合一个**[数据查询应用](https://github.com/cloudframeworks-apigateway/springdata)**介绍KONG API GATEWAY及其最佳实践方法。
+本篇[云框架](ABOUT.md)将结合一个[数据查询应用](https://github.com/cloudframeworks-apigateway/springdata)介绍KONG API GATEWAY及其最佳实践方法。
 
 # 内容概览
 
