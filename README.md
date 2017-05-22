@@ -77,13 +77,13 @@
 
 6. 访问路径
 
-    http://127.0.0.1:8000 - kong url
+    http://本机IP:8000 - kong url
    
-    http://127.0.0.1:8001 - kong admin url
+    http://本机IP:8001 - kong admin url
    
-    https://127.0.0.1:8443 - kong https url
+    https://本机IP:8443 - kong https url
    
-    http://127.0.0.1:5000 - kong dashboard ui
+    http://本机IP:5000 - kong dashboard ui
 
     https://本机IP:8080/api/persons - user api url
     
