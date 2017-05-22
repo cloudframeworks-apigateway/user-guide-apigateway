@@ -86,8 +86,8 @@
     http://127.0.0.1:5000 - kong dashboard ui
     
     https://本机IP:8080/api/persons - user api url
-   
-    https://本机IP:8080/api/newinfos - newinfo api url
+    
+    https://本机IP:8080/api/newinfos - newinfo api url
 
 # <a name="框架说明-业务"></a>框架说明-业务
 
@@ -292,7 +292,7 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
     curl -X POST \
         --data "name=oauthadmin" \
         --data "redirect_uri=https://本机IP:8080/api/persons"          #本机IP通过ifconfig查看
-        http://127.0.0.1:8001/consumers/personapi/oauth2
+        http://127.0.0.1:8001/consumers/personapi/oauth2
     ```
 
 3. 申请accesstoken并访问
