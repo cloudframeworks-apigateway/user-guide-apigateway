@@ -1,25 +1,16 @@
-nginx1:
-  mem_limit: 128m
+springdata:
+  image: goodraincloudframeworks/springdata
   ports:
-    - 9001:80
-  restart: always
+    - 8080:8080
 
-nginx2:
-  mem_limit: 128m
-  ports:
-    - 9002:80
-  restart: always
-
-# Kong Database
 kong-database:
   image: postgres
   ports:
-    - 5432
+    - 5432:5432
   environment:
     - POSTGRES_USER=kong
     - POSTGRES_DB=kong
 
-# Kong
 kong:
   image: kong
   links:
@@ -35,8 +26,7 @@ kong:
     - KONG_DATABASE=postgres
     - KONG_PG_HOST=kong-database
 
-# Kong dashboard
-kong:
+kong-dashboard:
   image: woodyalen202/docker-kong-dashboard
   ports:
-    - 5000:8080
+    - 5000:5000
