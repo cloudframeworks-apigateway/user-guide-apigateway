@@ -250,8 +250,8 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
     ```
     curl -X POST \
         --data 'name=oauth2' \
-        --data 'enable_password_grant=true' \
-        --data 'provision_key=qwe1238amsdh23' \
+        --data 'config.enable_password_grant=true' \
+        --data 'config.provision_key=qwe1238amsdh23' \
         --data 'config.scopes=read,write' \
         http://127.0.0.1:8001/apis/personapi/plugins 
     ```
