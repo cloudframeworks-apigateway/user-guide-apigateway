@@ -27,6 +27,6 @@ kong:
     - KONG_PG_HOST=kong-database
 
 kong-dashboard:
-  image: woodyalen202/docker-kong-dashboard
+  image: goodraincloudframeworks/docker-kong-dashboard
   ports:
     - 5000:5000
