@@ -60,9 +60,9 @@ KONG代理方式包括：1）应用通过携带HOST头部路由到对应的API�
 
 **注册user端口api**
 
-Name：persons
+Name：personapi
 
-Hosts：persons
+Hosts：personapi
 
 Upstream url：https://本机IP:8080/api/persons
 
