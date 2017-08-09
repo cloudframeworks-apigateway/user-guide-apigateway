@@ -255,6 +255,7 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
         --data 'config.scopes=read,write' \
         http://127.0.0.1:8001/apis/personapi/plugins
     ```
+
 2. 添加Consumer及Consumer对应的credentials
 
     ```
