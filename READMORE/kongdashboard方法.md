@@ -104,7 +104,7 @@ Username：oauthadmin
 
 Custom id：personapi
 
-图addoauth2consumer
+<div align=center><img width="900" height="" src="./image/addoauth2consumer.png"/></div>
 
 **添加对应Credentials**
 
@@ -124,7 +124,7 @@ Plugin：ip-restriction
 
 Apply to：All Consumers
 
-Whitelist：127.17.0.1 （可按需要修改）
+Whitelist：172.17.0.1 （可按需要修改）
 
 <div align=center><img width="900" height="" src="./image/addiprestriction.png"/></div>
 
@@ -149,3 +149,5 @@ Path：/tmp/file.log
 Reopen：YES
 
 <div align=center><img width="900" height="" src="./image/addfilelog.png"/></div>
+
+

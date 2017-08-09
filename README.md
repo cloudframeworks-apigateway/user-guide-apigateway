@@ -253,9 +253,8 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
         --data 'config.enable_password_grant=true' \
         --data 'config.provision_key=qwe1238amsdh23' \
         --data 'config.scopes=read,write' \
-        http://127.0.0.1:8001/apis/personapi/plugins 
+        http://127.0.0.1:8001/apis/personapi/plugins
     ```
-
 2. 添加Consumer及Consumer对应的credentials
 
     ```
@@ -524,3 +523,5 @@ newinfo端口无需配置此插件。
 -------
 
 [云框架](ABOUT.md)系列主题，遵循[APACHE LICENSE 2.0](LICENSE.md)协议发布。
+
+
