@@ -247,14 +247,13 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 1. 注册Oauth2插件，详情参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
 
-    ```
-    curl -X POST \
-        --data 'name=oauth2' \
-        --data 'config.enable_password_grant=true' \
-        --data 'config.provision_key=qwe1238amsdh23' \
-        --data 'config.scopes=read,write' \
-        http://127.0.0.1:8001/apis/personapi/plugins
-    ```
+```
+curl -X POST \
+  --data 'name=oauth2' \
+  --data 'config.enable_password_grant=true' \
+  --data 'config.provision_key=qwe1238amsdh23' \
+  http://127.0.0.1:8001/apis/personapi/plugins
+```
 
 2. 添加Consumer及Consumer对应的credentials
 
