@@ -78,12 +78,6 @@ Upstream url：https://本机IP:8080/api/newinfos
 
 <div align=center><img width="900" height="" src="./image/addnewinfoapi.png"/></div>
 
-**通过Kong代理访问**
-
-user端口：https://127.0.0.1:8080/api/persons
-
-newinfo端口：https://127.0.0.1:8080/api/newinfos
-
 ## <a name="AUTHENTICATION"></a>AUTHENTICATION实现
 
 **user端口添加Oauth2插件**
