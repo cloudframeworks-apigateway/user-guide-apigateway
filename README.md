@@ -129,15 +129,15 @@ API可能没有用户概念，会出现随意调用的情况。为此Kong提供�
     ```
     curl -X POST \
         --data "username=oauthadmin" \
-        --data "custom_id=personapi"
-       http://127.0.0.1:8001/consumers/ \
+        --data "custom_id=personapi" \
+       http://127.0.0.1:8001/consumers/ 
     ```
 
 2. 在key-auth插件中为此consumer生成key
 
     ```
     curl -X POST \
-       http://127.0.0.1:8001/consumers/personapi/key-auth \
+       http://127.0.0.1:8001/consumers/oauthadmin/key-auth \
     ```
 
 此时即可使用key来通过权限验证访问API了，需要注意的是：
@@ -165,7 +165,7 @@ API可能没有用户概念，会出现随意调用的情况。为此Kong提供�
 2. 访问验证：
 
     ```
-    curl -H 'Host: personapi' -H 'TT: 78182b121a074fe6961555d802e40b3b' http://127.0.0.1:8000
+    curl -H 'Host: personapi' -H 'TT: {KEY}' http://127.0.0.1:8000
     ```
 
     ```
@@ -180,23 +180,23 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 1. 注册user api
 
-```
+    ```
     curl -i -X POST \
-          --url http://127.0.0.1:8001/apis/ \
-          --data 'name=personapi' \
-          --data 'hosts=personapi' \
+        --url http://127.0.0.1:8001/apis/ \
+        --data 'name=personapi' \
+        --data 'hosts=personapi' \
           --data 'upstream_url=https://本机IP:8080/api/persons'
-```
+    ```
 
 2. 注册newinfo api
 
-```
+    ```
     curl -i -X POST \
-          --url http://127.0.0.1:8001/apis/ \
-         --data 'name=newinfoapi' \
-         --data 'hosts=newinfoapi' \
-         --data 'upstream_url=https://本机IP:8080/api/newinfos'
-```
+        --url http://127.0.0.1:8001/apis/ \
+        --data 'name=newinfoapi' \
+        --data 'hosts=newinfoapi' \
+        --data 'upstream_url=https://本机IP:8080/api/newinfos'
+    ```
 
 3. 注册成功后即可通过Kong代理访问
 
@@ -245,43 +245,50 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
 
 通过[OAuth 2.0 Authentication](https://github.com/cloudframeworks-apigateway/kongplugin/tree/master/kong/plugins/oauth2)插件实现user端口的用户访问限制，
 
-1. 注册Oauth2插件，详情参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)。
+1. 注册Oauth2插件，详情参见[配置说明](https://getkong.org/plugins/oauth2-authentication/#configuration)
 
-```
-curl -X POST \
-  --data 'name=oauth2' \
-  --data 'config.enable_password_grant=true' \
-  --data 'config.provision_key=qwe1238amsdh23' \
-  http://127.0.0.1:8001/apis/personapi/plugins
-```
+    ```
+    curl -X POST \
+        --data 'name=oauth2' \
+        --data 'config.enable_password_grant=true' \
+        --data 'config.provision_key=qwe1238amsdh23' \
+        http://127.0.0.1:8001/apis/personapi/plugins
+    ```
 
 2. 添加Consumer及Consumer对应的credentials
 
     ```
     curl -X POST \
         --data "username=oauthadmin" \
-        --data "custom_id=personapi"
-        http://127.0.0.1:8001/consumers/ \
+        --data "custom_id=personapi" \
+        http://127.0.0.1:8001/consumers/ 
     ```
 
     ```
     curl -X POST \
         --data "name=oauthadmin" \
-        --data "redirect_uri=https://本机IP:8080/api/persons"
-        http://127.0.0.1:8001/consumers/personapi/oauth2
+        --data "client_id=personapi" \
+        --data "redirect_uri=https://本机IP:8080/api/persons" \
+        http://127.0.0.1:8001/consumers/oauthadmin/oauth2
     ```
 
 3. 申请accesstoken并访问
+
+    命令：
 
     ```
     curl -k -H 'Host: personapi' \
         --data "client_id=5bee1b6679e5463599d7ce64b14c2795" \
         --data "client_secret=54f2a058f30f46e8b5ccc8d6788eb081" \
         --data "provision_key=qwe1238amsdh23" \
-        --data "authenticated_userid=b48bf407-c2b7-41a9-8e0f-43eead2fc60f" 
-        --data "grant_type=password" 
+        --data "authenticated_userid=b48bf407-c2b7-41a9-8e0f-43eead2fc60f" \
+        --data "grant_type=password" \
         https://127.0.0.1:8443/oauth2/token
-
+    ```
+    
+    返回：
+    
+    ```JSON
     {
         "refresh_token":"e87d871957eb4717bb0002054ae8c9a3",
         "token_type":"bearer",
@@ -341,12 +348,12 @@ newinfo端口由于数据不敏感，无需特殊配置。
 
 1. 为user端口添加IP Restriction插件扩展，并设置白名单（只有名单内的IP可以访问API）
 
-```
-curl -X POST \
-     --data 'name=ip-restriction' \
-     --data 'config.whitelist=172.17.0.1' \
-     http://127.0.0.1:8001/apis/personapi/plugins 
-```
+    ```
+    curl -X POST \
+        --data 'name=ip-restriction' \
+        --data 'config.whitelist=172.17.0.1' \
+        http://127.0.0.1:8001/apis/personapi/plugins 
+    ```
 
 2. 访问效果：
 
@@ -396,12 +403,12 @@ user端口通过[Rate Limiting](https://github.com/cloudframeworks-apigateway/ko
 
 1. 为user端口添加Rate Limiting插件扩展（此处设置1分钟内只能访问1次）
 
-```
-curl -X POST \
-     --data 'name=rate-limiting' \
-     --data 'config.minute=1' \
-     http://127.0.0.1:8001/apis/personapi/plugins 
-```
+    ```
+    curl -X POST \
+        --data 'name=rate-limiting' \
+        --data 'config.minute=1' \
+        http://127.0.0.1:8001/apis/personapi/plugins 
+    ```
 
 2. 访问效果：
 
@@ -451,12 +458,12 @@ user端口通过[File-log](https://github.com/cloudframeworks-apigateway/kongplu
 
 1. 为user端口添加File-log插件，并设置为日志文件路径设为:/tmp/file.log
 
-```
-curl -X POST \
-     --data 'name=file-log' \
-     --data 'config.path=/tmp/file.log' \
-     http://127.0.0.1:8001/apis/personapi/plugins 
-```
+    ```
+    curl -X POST \
+        --data 'name=file-log' \
+        --data 'config.path=/tmp/file.log' \
+        http://127.0.0.1:8001/apis/personapi/plugins 
+    ```
 
 2. 添加日志插件后，每次访问都会被记录
 
