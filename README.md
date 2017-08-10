@@ -185,7 +185,7 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
         --url http://127.0.0.1:8001/apis/ \
         --data 'name=personapi' \
         --data 'hosts=personapi' \
-          --data 'upstream_url=https://本机IP:8080/api/persons'
+        --data 'upstream_url=https://本机IP:8080/api/persons'
     ```
 
 2. 注册newinfo api
@@ -195,7 +195,7 @@ user端口和newinfo端口之间实现路由，需先将服务注册到Kong，�
         --url http://127.0.0.1:8001/apis/ \
         --data 'name=newinfoapi' \
         --data 'hosts=newinfoapi' \
-        --data 'upstream_url=https://本机IP:8080/api/newinfos'
+        --data 'upstream_url=https://本机IP:8080/api/newinfos'
     ```
 
 3. 注册成功后即可通过Kong代理访问
