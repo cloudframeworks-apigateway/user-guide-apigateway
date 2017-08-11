@@ -17,15 +17,17 @@
 # 内容概览
 
 * [快速部署](#快速部署)
+    * [一键部署](#一键部署)
+    * [本地部署](#本地部署) 
 * [框架说明-业务](#框架说明-业务)
 * [框架说明-组件](#框架说明-组件)
-   * [组件架构](#组件架构)
-   * [KONG基本使用](#KONG基本使用)
-   * [ROUTING实现](#ROUTING)
-   * [AUTHENTICATION实现](#AUTHENTICATION)
-   * [SECURITY实现](#SECURITY)
-   * [TRAFFIC CONTROL实现](#TRAFFICCONTROL)
-   * [LOGGING实现](#LOGGING)
+    * [组件架构](#组件架构)
+    * [KONG基本使用](#KONG基本使用)
+    * [ROUTING实现](#ROUTING)
+    * [AUTHENTICATION实现](#AUTHENTICATION)
+    * [SECURITY实现](#SECURITY)
+    * [TRAFFIC CONTROL实现](#TRAFFICCONTROL)
+    * [LOGGING实现](#LOGGING)
 * [KONG插件开发](#KONG插件开发)
 * [生产环境](#生产环境)
 * [常见问题](#常见问题)
@@ -33,6 +35,12 @@
 * [社群贡献](#社群贡献)
 
 # <a name="快速部署"></a>快速部署
+
+## <a name="一键部署"></a>一键部署
+
+[一键部署至好雨云帮](http://app.goodrain.com/group/detail/27/)
+
+## <a name="本地部署"></a>本地部署
 
 1. [准备Docker环境](https://github.com/cloudframeworks-apigateway/user-guide-apigateway/blob/master/READMORE/install%20docker.md)
 

@@ -34,3 +34,5 @@ kong-dashboard:
   ports:
     - 5000:5000
   container_name: kong-dashboard
+
+
