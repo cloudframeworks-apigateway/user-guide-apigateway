@@ -5,7 +5,7 @@ springdata:
   container_name: springdata
 
 kong-database:
-  image: postgres
+  image: postgres:9.4
   ports:
     - 5432:5432
   environment:
@@ -15,6 +15,7 @@ kong-database:
 
 kong:
   image: kong
+  restart: always
   links:
     - kong-database:kong-database
   ports:
