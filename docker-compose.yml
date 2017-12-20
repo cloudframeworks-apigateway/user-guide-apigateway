@@ -14,7 +14,7 @@ kong-database:
   container_name: kong-database
 
 kong:
-  image: kong
+  image: goodraincloudframeworks/docker-kong
   restart: always
   links:
     - kong-database:kong-database
