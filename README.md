@@ -38,7 +38,7 @@
 
 ## <a name="一键部署"></a>一键部署
 
-[一键部署至好雨云帮](http://app.goodrain.com/group/detail/27/)
+[一键部署至好雨云帮](https://www.goodrain.com/app/detail/27)
 
 ## <a name="本地部署"></a>本地部署
 
