@@ -66,7 +66,7 @@
     
     https://本机IP:8443 - kong https url
     
-    http://本机IP:5000 - kong dashboard ui
+    http://本机IP:8081 - kong dashboard ui
     
     https://本机IP:8080/api/persons - user api url
     
