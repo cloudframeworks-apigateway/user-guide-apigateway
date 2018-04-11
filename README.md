@@ -1,7 +1,7 @@
 # [云框架]KONG API Gateway v1.5
 
 ![](https://img.shields.io/badge/release-v1.0-green.svg)
-[![](https://img.shields.io/badge/Producer-lucienu2-orange.svg)](CONTRIBUTORS.md)
+[![](https://img.shields.io/badge/Producer-lucienu2&Barnett-orange.svg)](CONTRIBUTORS.md)
 ![](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
 当前版本采用KONG`v0.12.3`
