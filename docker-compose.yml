@@ -13,7 +13,7 @@ kong-database:
     - POSTGRES_DB=kong
     - POSTGRES_PASSWORD=kong
   volumes:
-    - /kongdata:/var/lib/postgresql/data
+    - ~/kongdata:/var/lib/postgresql/data
   container_name: kong-database
 
 kong:
@@ -30,7 +30,7 @@ kong:
     - KONG_PG_HOST=kong-database
     - KONG_PG_USER=kong
     - KONG_PG_DATABASE=kong
-    - KONG_PG_PAASWORD=kong
+    - KONG_PG_PASSWORD=kong
   container_name: kong
 
 kong-dashboard:
@@ -41,7 +41,7 @@ kong-dashboard:
     - KONGADMIN_HOST=kongadmin
     - KONGADMIN_PORT=8001
   ports:
-    - 5000:5000
+    - 8081:8080
   container_name: kong-dashboard
 
 
